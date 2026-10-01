@@ -4,6 +4,6 @@ tensorflow==2.17.0
 numpy==1.26.4
 
 # Conversion al formato de navegador.
-# Instalarlo en un entorno virtual aparte: arrastra su propio subconjunto de
+# Instalarlo en un entorno virtual aparte (.venv-conversion): arrastra su propio subconjunto de
 # TensorFlow y puede entrar en conflicto con el de arriba.
 # tensorflowjs==4.22.0

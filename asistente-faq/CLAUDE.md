@@ -105,7 +105,8 @@ Sin rutas absolutas ni dominios fijos. El ministerio elige dónde alojarlo y
 debe funcionar sin editar nada.
 
 Esto incluye las dependencias: TensorFlow.js se sirve desde `web/lib/tf.min.js`
-(versión 4.22.0, Apache 2.0), nunca desde un CDN. Una caída del CDN o una
+(versión 4.22.0, Apache 2.0), nunca desde un CDN. La versión se fija en
+`package.json` y se copia con `npm run libs`. Una caída del CDN o una
 política de red del ministerio dejaría el widget sin modelo y sin aviso.
 
 ---
@@ -136,15 +137,20 @@ Requiere Python 3.9 a 3.12 (límite de TensorFlow 2.17) y Node para la
 verificación de equivalencia.
 
 ```bash
+python -m venv .venv && source .venv/bin/activate   # entrenamiento
 pip install -r requirements.txt
+python -m venv .venv-conversion                     # solo conversión
+.venv-conversion/bin/pip install tensorflowjs==4.22.0
+npm ci && npm run libs                              # librerías del navegador
 
 python entrenamiento/validar.py                 # valida el catálogo
 python entrenamiento/verificar_equivalencia.py  # Python contra JS (requiere Node)
 python entrenamiento/entrenar.py                # entrena, evalúa y exporta
 
-# tensorflowjs no viene en requirements.txt: instalarlo en un entorno virtual
-# aparte (ver el comentario en ese archivo) antes de convertir.
-tensorflowjs_converter --input_format keras modelo/modelo.h5 web/modelo
+# tensorflowjs va en su propio entorno (.venv-conversion) por el conflicto con
+# el TensorFlow de requirements.txt.
+.venv-conversion/bin/tensorflowjs_converter --input_format keras \
+    modelo/modelo.h5 web/modelo
 
 cd web && python -m http.server 8000            # prueba local
 ```
@@ -160,7 +166,8 @@ que el navegador cargue el modelo y los datos.
 contenido/intenciones.json      Catálogo. Único archivo que edita el ministerio.
 entrenamiento/                  Python: preprocesamiento, validación, entrenamiento.
 web/                            Widget: interfaz, motor, preprocesamiento gemelo.
-web/lib/                        TensorFlow.js local. Se actualiza solo a propósito.
+web/lib/                        TensorFlow.js local, copiado desde npm (npm run libs).
+package.json  scripts/          Versión fijada de las librerías del navegador.
 web/datos/  web/modelo/         Generados. No editar a mano.
                                 datos/ = vocabulario.json, clases.json, catalogo.json
 modelo/                         Keras (modelo.h5). Generado; fuera de git.

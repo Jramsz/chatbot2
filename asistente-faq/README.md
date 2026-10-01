@@ -56,8 +56,26 @@ contenido. Las carpetas `web/datos/` y `web/modelo/` se generan.
 
 ## Puesta en marcha
 
+Todo se instala dentro de entornos virtuales; nada va al sistema.
+
 ```bash
+# Python (entrenamiento). Requiere Python 3.9 a 3.12.
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+# Conversion a TensorFlow.js: entorno aparte, porque tensorflowjs arrastra su
+# propio subconjunto de TensorFlow y puede chocar con el de arriba.
+python -m venv .venv-conversion
+.venv-conversion/bin/pip install tensorflowjs==4.22.0
+
+# Librerias del navegador (npm). Copia TensorFlow.js a web/lib/.
+npm ci
+npm run libs
+```
+
+`web/lib/tf.min.js` ya viene incluido en el repositorio; `npm run libs` solo
+hace falta al actualizar la version en `package.json`.
 ```
 
 ### 1. Validar el catálogo
@@ -93,7 +111,8 @@ del umbral definido en `EXACTITUD_MINIMA`, el proceso se detiene sin publicar.
 ### 4. Convertir el modelo para el navegador
 
 ```bash
-tensorflowjs_converter --input_format keras modelo/modelo.h5 web/modelo
+.venv-conversion/bin/tensorflowjs_converter --input_format keras \
+    modelo/modelo.h5 web/modelo
 ```
 
 ### 5. Probar en local
