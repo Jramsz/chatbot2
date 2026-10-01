@@ -106,7 +106,7 @@ debe funcionar sin editar nada.
 
 Esto incluye las dependencias: TensorFlow.js se sirve desde `web/lib/tf.min.js`
 (versión 4.22.0, Apache 2.0), nunca desde un CDN. La versión se fija en
-`package.json` y se copia con `npm run libs`. Una caída del CDN o una
+`package.json` y se copia con `pnpm run libs`. Una caída del CDN o una
 política de red del ministerio dejaría el widget sin modelo y sin aviso.
 
 ---
@@ -141,7 +141,7 @@ python -m venv .venv && source .venv/bin/activate   # entrenamiento
 pip install -r requirements.txt
 python -m venv .venv-conversion                     # solo conversión
 .venv-conversion/bin/pip install tensorflowjs==4.22.0
-npm ci && npm run libs                              # librerías del navegador
+pnpm install --frozen-lockfile && pnpm run libs         # librerías del navegador
 
 python entrenamiento/validar.py                 # valida el catálogo
 python entrenamiento/verificar_equivalencia.py  # Python contra JS (requiere Node)
@@ -166,7 +166,7 @@ que el navegador cargue el modelo y los datos.
 contenido/intenciones.json      Catálogo. Único archivo que edita el ministerio.
 entrenamiento/                  Python: preprocesamiento, validación, entrenamiento.
 web/                            Widget: interfaz, motor, preprocesamiento gemelo.
-web/lib/                        TensorFlow.js local, copiado desde npm (npm run libs).
+web/lib/                        TensorFlow.js local, copiado desde pnpm (pnpm run libs).
 package.json  scripts/          Versión fijada de las librerías del navegador.
 web/datos/  web/modelo/         Generados. No editar a mano.
                                 datos/ = vocabulario.json, clases.json, catalogo.json

@@ -69,12 +69,12 @@ pip install -r requirements.txt
 python -m venv .venv-conversion
 .venv-conversion/bin/pip install tensorflowjs==4.22.0
 
-# Librerias del navegador (npm). Copia TensorFlow.js a web/lib/.
-npm ci
-npm run libs
+# Librerias del navegador (pnpm). Copia TensorFlow.js a web/lib/.
+pnpm install --frozen-lockfile
+pnpm run libs
 ```
 
-`web/lib/tf.min.js` ya viene incluido en el repositorio; `npm run libs` solo
+`web/lib/tf.min.js` ya viene incluido en el repositorio; `pnpm run libs` solo
 hace falta al actualizar la version en `package.json`.
 ```
 
