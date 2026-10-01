@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asistente de preguntas frecuentes</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <!-- Altura fija y desplazamiento interno: el marco embebido no se
+       redimensiona al crecer el contenido. -->
+  <main class="asistente" role="main">
+    <header class="cabecera">
+      <h1>Asistente de preguntas frecuentes</h1>
+    </header>
+
+    <div id="conversacion" class="conversacion" aria-live="polite"></div>
+
+    <div class="entrada-zona">
+      <label class="oculto" for="entrada">Escribe tu consulta</label>
+      <input
+        id="entrada"
+        type="text"
+        placeholder="Escribe tu consulta…"
+        autocomplete="off"
+        disabled>
+      <button id="enviar" type="button">Enviar</button>
+    </div>
+  </main>
+
+  <!-- TensorFlow.js desde CDN durante el desarrollo. Para produccion, la
+       propuesta establece empaquetarlo localmente: evita fallos por politicas
+       de seguridad del sitio anfitrion y elimina una dependencia externa. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="preprocesamiento.js"></script>
+  <script src="motor.js"></script>
+  <script src="interfaz.js"></script>
+</body>
+</html>

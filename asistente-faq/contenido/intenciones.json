@@ -1,0 +1,156 @@
+{
+  "version": "2026-1",
+  "actualizado": "2026-10-01",
+  "categorias": [
+    { "id": "entrega-notas", "nombre": "Entrega de notas" },
+    { "id": "tramites", "nombre": "Trámites académicos" },
+    { "id": "utiles", "nombre": "Útiles escolares" },
+    { "id": "otras", "nombre": "Otras consultas" }
+  ],
+  "intenciones": [
+    {
+      "id": "notas-fecha-entrega",
+      "categoria": "entrega-notas",
+      "subtema": "Fechas",
+      "prioridad": 1,
+      "pregunta": "¿Cuándo entregan las notas?",
+      "patrones": [
+        "cuándo entregan las notas",
+        "qué día dan las notas",
+        "cuando es la entrega de notas",
+        "fecha de entrega de boletas",
+        "ya salieron las notas",
+        "cuando puedo ver mis calificaciones",
+        "a que hora entregan notas"
+      ],
+      "respuesta": "La entrega de notas se realiza durante la semana posterior al cierre de cada período de evaluación. La dirección de su centro educativo comunica la fecha y el horario exactos. Si no recibió el aviso, consulte en la secretaría del centro.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "notas-boleta-extravio",
+      "categoria": "entrega-notas",
+      "subtema": "Boletas",
+      "prioridad": 2,
+      "pregunta": "¿Qué hago si perdí la boleta de notas?",
+      "patrones": [
+        "perdí mi boleta de notas",
+        "se me extravió el reporte de notas",
+        "cómo repongo la boleta",
+        "qué hago si no encuentro mis notas",
+        "necesito una copia de la boleta",
+        "reposición de boleta de calificaciones",
+        "boleta perdida"
+      ],
+      "respuesta": "Debe solicitar la reposición en la secretaría de su centro educativo, presentando su documento de identidad o el de su responsable. La reposición no tiene costo y se entrega en un plazo aproximado de cinco días hábiles.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "tramites-constancia",
+      "categoria": "tramites",
+      "subtema": "Constancias",
+      "prioridad": 1,
+      "pregunta": "¿Cómo solicito una constancia de estudios?",
+      "patrones": [
+        "cómo solicito una constancia de estudios",
+        "necesito una constancia",
+        "dónde pido constancia de estudio",
+        "requisitos para constancia estudiantil",
+        "quiero sacar una constancia",
+        "cuánto tardan en dar la constancia",
+        "papeles para constancia de estudios"
+      ],
+      "respuesta": "Presente en la secretaría de su centro educativo su documento de identidad o el de su responsable, e indique el año y grado cursado. El trámite no tiene costo y la entrega se realiza en un plazo aproximado de cinco días hábiles.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "tramites-traslado",
+      "categoria": "tramites",
+      "subtema": "Traslados",
+      "prioridad": 3,
+      "pregunta": "¿Cómo traslado mi expediente a otro centro escolar?",
+      "patrones": [
+        "cómo traslado mi expediente",
+        "quiero cambiarme de centro escolar",
+        "traslado a otra escuela",
+        "pasar mis papeles a otro instituto",
+        "requisitos para cambio de escuela",
+        "me voy a cambiar de colegio qué hago",
+        "traslado de expediente academico"
+      ],
+      "respuesta": "Solicite la constancia de traslado en el centro de origen y preséntela en el centro de destino junto con su documento de identidad. El centro de destino confirma la disponibilidad de cupo antes de completar el traslado.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "utiles-entrega",
+      "categoria": "utiles",
+      "subtema": "Paquete escolar",
+      "prioridad": 1,
+      "pregunta": "¿Dónde retiro el paquete de útiles escolares?",
+      "patrones": [
+        "dónde retiro los útiles escolares",
+        "cuándo dan el paquete escolar",
+        "entrega de uniformes y zapatos",
+        "ya llegaron los útiles",
+        "quién entrega el paquete escolar",
+        "no he recibido mis utiles",
+        "cuando reparten cuadernos"
+      ],
+      "respuesta": "La entrega del paquete escolar se realiza en el centro educativo donde el estudiante está matriculado. La dirección informa la fecha y horario de distribución. El estudiante debe presentarse acompañado de su padre, madre o responsable.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "matricula-fechas",
+      "categoria": "tramites",
+      "subtema": "Matrícula",
+      "prioridad": 1,
+      "pregunta": "¿Cuándo es el período de matrícula?",
+      "patrones": [
+        "cuándo es la matrícula",
+        "fechas de inscripción del año escolar",
+        "hasta cuando puedo matricularme",
+        "período de matriculación",
+        "ya puedo inscribir a mi hijo",
+        "requisitos de matricula",
+        "cuando abren inscripciones"
+      ],
+      "respuesta": "El período de matrícula se desarrolla conforme al calendario escolar oficial. Las fechas específicas varían según el nivel, la modalidad y la zona, por lo que debe consultarlas con la dirección de su centro educativo.",
+      "vigencia": "2026"
+    },
+    {
+      "id": "otras-contacto",
+      "categoria": "otras",
+      "subtema": "Contacto",
+      "prioridad": 2,
+      "pregunta": "¿Cómo contacto al ministerio?",
+      "patrones": [
+        "cómo contacto al ministerio",
+        "teléfono del mineducyt",
+        "quiero hablar con alguien del ministerio",
+        "dónde presento una queja",
+        "atención al público del ministerio",
+        "necesito comunicarme con el ministerio",
+        "direccion de las oficinas centrales"
+      ],
+      "respuesta": "Para consultas que este asistente no resuelve, acuda a la dirección de su centro educativo, que es la vía institucional de primera instancia, o a la departamental de educación correspondiente a su zona.",
+      "vigencia": "permanente"
+    },
+    {
+      "id": "otras-carnet",
+      "categoria": "otras",
+      "subtema": "Documentos",
+      "prioridad": 3,
+      "pregunta": "¿Qué hago si perdí mi carné de estudiante?",
+      "patrones": [
+        "perdí mi carné de estudiante",
+        "se me extravió el carnet",
+        "cómo repongo el carné estudiantil",
+        "necesito otro carnet",
+        "carné perdido qué hago",
+        "reposicion de carnet de estudiante",
+        "no tengo mi carne"
+      ],
+      "respuesta": "Reporte el extravío en la secretaría de su centro educativo y solicite la reposición. Debe presentar su documento de identidad o el de su responsable.",
+      "vigencia": "permanente"
+    }
+  ]
+}

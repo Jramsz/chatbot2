@@ -1,0 +1,6 @@
+web/datos/
+web/modelo/
+modelo/
+__pycache__/
+*.pyc
+.venv/
