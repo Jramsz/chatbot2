@@ -28,7 +28,13 @@
         "cuándo cierra el período y dan las notas",
         "ya están listas las notas del período",
         "a qué hora entregan las boletas de calificaciones",
-        "qué día recojo la libreta de notas"
+        "qué día recojo la libreta de notas",
+        "cuándo me dan la libreta de calificaciones",
+        "en qué fecha puedo ver las notas del período",
+        "cuándo publican las calificaciones",
+        "me avisan cuando estén las notas",
+        "fecha para recoger notas en el colegio",
+        "qué día es la reunión de padres para recibir notas"
       ],
       "respuesta": "La entrega de notas se realiza durante la semana posterior al cierre de cada período de evaluación. La dirección de su centro educativo comunica la fecha y el horario exactos. Si no recibió el aviso, consulte en la secretaría del centro.",
       "vigencia": "permanente"
@@ -53,7 +59,13 @@
         "me robaron la libreta de notas",
         "la boleta se mojó y no se lee",
         "pedir duplicado de boleta",
-        "cuánto cuesta reponer la boleta"
+        "cuánto cuesta reponer la boleta",
+        "se perdió la libreta de notas de mi hijo",
+        "cómo saco un duplicado de la boleta de calificaciones",
+        "necesito reponer mi boleta de notas",
+        "qué debo hacer porque no tengo la boleta",
+        "dónde solicito otra copia de mis notas",
+        "cómo repongo una libreta de notas extraviada"
       ],
       "respuesta": "Debe solicitar la reposición en la secretaría de su centro educativo, presentando su documento de identidad o el de su responsable. La reposición no tiene costo y se entrega en un plazo aproximado de cinco días hábiles.",
       "vigencia": "permanente"
@@ -78,7 +90,13 @@
         "dónde tramito constancia de estudios",
         "cuántos días tarda la constancia estudiantil",
         "tengo que llevar documentos para la constancia",
-        "constancia de notas para beca"
+        "constancia de notas para beca",
+        "constancia para presentar en el trabajo de mi mamá",
+        "dónde me dan un documento que diga que estudio",
+        "cómo solicito constancia de conducta o estudios",
+        "cuánto cuesta la constancia de estudio",
+        "puedo pedir la constancia por otra persona",
+        "necesito un papel que compruebe que soy alumno"
       ],
       "respuesta": "Presente en la secretaría de su centro educativo su documento de identidad o el de su responsable, e indique el año y grado cursado. El trámite no tiene costo y la entrega se realiza en un plazo aproximado de cinco días hábiles.",
       "vigencia": "permanente"
@@ -103,7 +121,13 @@
         "trámite para trasladar a un estudiante",
         "necesito la constancia de traslado",
         "pasar de una escuela a otra a mitad de año",
-        "cómo hago el cambio de centro escolar"
+        "cómo hago el cambio de centro escolar",
+        "cómo hago para que mi hijo estudie en otra escuela",
+        "quiero cambiar de colegio a mi hijo",
+        "qué requisitos hay para trasladar a un alumno",
+        "necesito pasar a otro centro escolar por cambio de domicilio",
+        "cómo traslado a mi hija al instituto más cercano",
+        "qué documentos me piden en la escuela nueva"
       ],
       "respuesta": "Solicite la constancia de traslado en el centro de origen y preséntela en el centro de destino junto con su documento de identidad. El centro de destino confirma la disponibilidad de cupo antes de completar el traslado.",
       "vigencia": "permanente"
@@ -128,7 +152,13 @@
         "a mi hijo no le dieron los útiles escolares",
         "cómo reclamo el paquete escolar",
         "hasta cuándo entregan los útiles",
-        "dónde recojo el uniforme escolar"
+        "dónde recojo el uniforme escolar",
+        "cuándo llegan los paquetes de útiles a la escuela",
+        "dónde reclamo los zapatos y el uniforme gratis",
+        "ya entregaron el paquete escolar",
+        "a quiénes les dan útiles escolares",
+        "por qué mi hijo no recibió cuadernos ni uniforme",
+        "dónde retiro el paquete que da el gobierno"
       ],
       "respuesta": "La entrega del paquete escolar se realiza en el centro educativo donde el estudiante está matriculado. La dirección informa la fecha y horario de distribución. El estudiante debe presentarse acompañado de su padre, madre o responsable.",
       "vigencia": "permanente"
@@ -153,7 +183,13 @@
         "qué documentos piden para matricular",
         "cómo inscribo a un estudiante nuevo",
         "ya abrieron la matrícula",
-        "cuándo termina el período de inscripción"
+        "cuándo termina el período de inscripción",
+        "cuándo puedo matricular a mi hija",
+        "qué día inician las inscripciones para el próximo año",
+        "hasta cuándo hay matrícula",
+        "puedo matricular después de la fecha",
+        "cómo me inscribo si llego tarde a la matrícula",
+        "dónde se hace la inscripción de estudiantes"
       ],
       "respuesta": "El período de matrícula se desarrolla conforme al calendario escolar oficial. Las fechas específicas varían según el nivel, la modalidad y la zona, por lo que debe consultarlas con la dirección de su centro educativo.",
       "vigencia": "2026"
@@ -178,7 +214,13 @@
         "cómo puedo poner un reclamo",
         "hablar con un encargado del ministerio",
         "horario de atención de las oficinas del ministerio",
-        "cómo me comunico con atención al ciudadano"
+        "cómo me comunico con atención al ciudadano",
+        "cuál es el teléfono para llamar al ministerio de educación",
+        "dónde puedo escribirle al ministerio",
+        "hay una línea de atención para consultas",
+        "cómo contacto a la dirección departamental",
+        "necesito hablar con una persona de atención",
+        "a dónde acudo para presentar un reclamo al ministerio"
       ],
       "respuesta": "Para consultas que este asistente no resuelve, acuda a la dirección de su centro educativo, que es la vía institucional de primera instancia, o a la departamental de educación correspondiente a su zona.",
       "vigencia": "permanente"
@@ -203,7 +245,13 @@
         "me robaron el carnet",
         "cuánto cuesta un carné nuevo",
         "qué requisitos piden para reponer el carnet",
-        "necesito duplicado del carné de estudiante"
+        "necesito duplicado del carné de estudiante",
+        "dónde me hacen otro carné de estudiante",
+        "qué hago si mi carné se dañó",
+        "cómo repongo mi credencial de estudiante",
+        "se me quedó el carnet y necesito uno nuevo",
+        "quién entrega el carné estudiantil",
+        "cuánto tarda la reposición del carnet"
       ],
       "respuesta": "Reporte el extravío en la secretaría de su centro educativo y solicite la reposición. Debe presentar su documento de identidad o el de su responsable.",
       "vigencia": "permanente"
@@ -228,7 +276,13 @@
         "pedir revisión de nota final",
         "la nota de la boleta no coincide con mi examen",
         "dónde presento un reclamo de calificaciones",
-        "qué pasa si hay una nota equivocada"
+        "qué pasa si hay una nota equivocada",
+        "tengo una queja por la nota de un examen",
+        "cómo apelo una calificación",
+        "quiero que el maestro revise mi calificación",
+        "a quién le pido revisión de una nota baja",
+        "cómo hago un reclamo por mi nota final",
+        "pedir que revisen el examen porque creo que está mal calificado"
       ],
       "respuesta": "Hable primero con el docente de la asignatura para que revise la evaluación. Si el desacuerdo continúa, presente su solicitud por escrito a la dirección del centro educativo, que indicará el procedimiento y el plazo de revisión.",
       "vigencia": "permanente"
@@ -253,7 +307,13 @@
         "valor de las actividades y exámenes",
         "cuántos puntos necesito para aprobar el año",
         "explicación de la escala de calificaciones",
-        "cómo se obtiene la nota del año"
+        "cómo se obtiene la nota del año",
+        "cuánto vale cada período en la nota final",
+        "con qué nota paso la materia",
+        "cuál es la escala de notas",
+        "cómo sacan el promedio anual de calificaciones",
+        "qué nota es la mínima para pasar el año",
+        "cómo calculan mi nota de conducta y materias"
       ],
       "respuesta": "La nota final se obtiene a partir de las evaluaciones de cada período, según la ponderación y la escala oficiales de evaluación vigentes. Su docente o la dirección del centro educativo pueden explicarle el detalle para su grado.",
       "vigencia": "permanente"
@@ -278,7 +338,13 @@
         "hay que pagar por el certificado",
         "qué documentos llevo para el certificado",
         "quiero un certificado de un año anterior",
-        "cómo recupero certificados de una escuela cerrada"
+        "cómo recupero certificados de una escuela cerrada",
+        "cómo solicito el certificado de bachillerato",
+        "necesito el certificado de estudios de años pasados",
+        "dónde saco el certificado de noveno",
+        "cuánto tardan en dar un certificado",
+        "qué requisitos piden para sacar certificados",
+        "cómo pido el título de bachiller"
       ],
       "respuesta": "Solicite el certificado en la secretaría del centro educativo donde cursó el grado, indicando el año y presentando su documento de identidad. Si el centro ya no existe, la dirección departamental puede orientarle sobre cómo obtenerlo.",
       "vigencia": "permanente"
@@ -303,7 +369,13 @@
         "retiro voluntario de un alumno",
         "quiero sacar a mi hijo del instituto",
         "puedo regresar después de retirarme",
-        "qué pasa con el expediente si me retiro"
+        "qué pasa con el expediente si me retiro",
+        "quiero retirar a mi hijo del centro educativo",
+        "cómo doy de baja la matrícula",
+        "trámite para suspender los estudios",
+        "necesito retirarme del instituto",
+        "cómo abandono la escuela de forma oficial",
+        "qué hago para retirar mi expediente"
       ],
       "respuesta": "El retiro lo solicita el estudiante o su responsable ante la dirección del centro educativo, que deja constancia en el expediente. Si desea reincorporarse más adelante, el centro le indicará cómo hacerlo.",
       "vigencia": "permanente"
@@ -328,7 +400,13 @@
         "hay una letra mal en mi nombre",
         "necesito corregir un dato en mi certificado",
         "qué documentos piden para rectificar un nombre",
-        "a quién le pido corregir mis datos"
+        "a quién le pido corregir mis datos",
+        "mi nombre aparece mal en el expediente",
+        "cómo cambio el apellido en los documentos de la escuela",
+        "se equivocaron con mi fecha de nacimiento",
+        "necesito corregir un error en mis datos personales",
+        "qué hago si el nombre salió mal en el certificado",
+        "cómo se corrigen los datos del estudiante"
       ],
       "respuesta": "Presente en la secretaría del centro educativo el documento de identidad o la partida de nacimiento con el dato correcto, y solicite la corrección en el expediente. Los documentos ya emitidos deberán solicitarse de nuevo con el dato corregido.",
       "vigencia": "permanente"
@@ -353,7 +431,13 @@
         "cómo me inscribo para repetir grado",
         "hay exámenes de segunda oportunidad",
         "qué sucede con materias pendientes",
-        "reprobar el año afecta mi matrícula"
+        "reprobar el año afecta mi matrícula",
+        "si repruebo me dejan repetir",
+        "qué pasa si pierdo el año",
+        "puedo recuperar la materia que reprobé",
+        "cómo funciona repetir un grado",
+        "qué sucede si no apruebo todas las materias",
+        "hay manera de pasar de año si reprobé una materia"
       ],
       "respuesta": "El centro educativo informa a cada estudiante, según su situación y las normas de evaluación vigentes, si debe repetir el grado o si puede recuperar asignaturas. Consulte con la dirección del centro para conocer las opciones disponibles.",
       "vigencia": "permanente"
@@ -378,7 +462,13 @@
         "dónde consigo la lista oficial de materiales",
         "requieren algún libro específico",
         "qué calculadora o instrumentos piden",
-        "qué materiales debo traer para arte y ciencias"
+        "qué materiales debo traer para arte y ciencias",
+        "dónde consigo la lista de útiles de mi grado",
+        "qué cuadernos y materiales debo comprar",
+        "cuál es la lista oficial de útiles",
+        "qué me piden para el año escolar",
+        "qué debo comprar además del paquete",
+        "qué materiales necesito para empezar clases"
       ],
       "respuesta": "La lista de materiales depende del grado y la publica el centro educativo. Consulte en la dirección o con el docente guía; el paquete escolar entregado por el ministerio cubre parte de los útiles básicos.",
       "vigencia": "permanente"
@@ -403,7 +493,13 @@
         "cómo reclamo si no llega la comida a la escuela",
         "alimentos para estudiantes con alergias",
         "la merienda escolar tiene costo",
-        "a quiénes les toca el refrigerio"
+        "a quiénes les toca el refrigerio",
+        "dan comida en la escuela",
+        "cuándo reparten el almuerzo escolar",
+        "el refrigerio es gratis para los estudiantes",
+        "mi hijo no recibe alimentos en el centro escolar",
+        "qué alimentos dan en el programa escolar",
+        "cómo funciona el programa de alimentación"
       ],
       "respuesta": "La alimentación escolar se administra en cada centro educativo, con apoyo de la comunidad. Para conocer el horario, el menú o reportar que no se ha recibido, consulte con la dirección del centro.",
       "vigencia": "permanente"
@@ -428,7 +524,13 @@
         "hay asueto la próxima semana",
         "cuántos días de clases tiene el año",
         "horario de clases en la mañana",
-        "dónde veo el calendario del año escolar"
+        "dónde veo el calendario del año escolar",
+        "cuándo empiezan las vacaciones de los estudiantes",
+        "qué días son feriados en la escuela",
+        "cuándo cierran las clases del año",
+        "en qué fecha inicia el año escolar",
+        "dónde puedo ver las fechas de vacaciones",
+        "cuál es el horario de entrada a clases"
       ],
       "respuesta": "El calendario escolar oficial se publica antes del inicio de cada año lectivo, e incluye inicio y cierre de clases, vacaciones y asuetos. El centro educativo informa además cualquier cambio de horario.",
       "vigencia": "permanente"
@@ -453,7 +555,13 @@
         "hay becas para estudiar en el extranjero",
         "documentos para la solicitud de beca",
         "hay programas de ayuda para continuar los estudios",
-        "cómo me entero de nuevas becas"
+        "cómo me entero de nuevas becas",
+        "cómo puedo obtener una beca",
+        "qué beca hay para estudiar bachillerato",
+        "dónde pido una beca de estudios",
+        "cuándo es la convocatoria de becas",
+        "requisitos para beca estudiantil",
+        "hay ayuda económica para estudiantes"
       ],
       "respuesta": "Las convocatorias de becas se publican con sus requisitos y fechas en los canales oficiales del ministerio. Consulte en el centro educativo para recibir orientación y confirmar si su caso cumple las condiciones.",
       "vigencia": "permanente"
@@ -478,7 +586,13 @@
         "mi hijo no quiere ir a clases por miedo",
         "dónde pido ayuda por maltrato escolar",
         "quién atiende los casos de violencia estudiantil",
-        "qué debo hacer si hay discriminación en la escuela"
+        "qué debo hacer si hay discriminación en la escuela",
+        "un compañero le pega a mi hijo",
+        "cómo denuncio un maltrato en la escuela",
+        "qué hago si hay acoso en el colegio",
+        "dónde reporto violencia en el centro educativo",
+        "un docente trata mal a los estudiantes",
+        "cómo denuncio bullying escolar"
       ],
       "respuesta": "Informe de inmediato a la dirección del centro educativo para que active el protocolo correspondiente. Si el caso no se atiende o involucra a la dirección, puede acudir a la dirección departamental de educación o a las instituciones de protección de la niñez.",
       "vigencia": "permanente"
@@ -503,7 +617,13 @@
         "qué materias evalúan en la prueba nacional",
         "puedo repetir la prueba si me va mal",
         "sirve la prueba para entrar a la universidad",
-        "en qué centro me toca presentar el examen"
+        "en qué centro me toca presentar el examen",
+        "cuándo es la prueba nacional",
+        "qué evalúan en el examen nacional de bachillerato",
+        "cómo me inscribo en la prueba nacional",
+        "dónde veo los resultados de la evaluación nacional",
+        "qué debo llevar a la prueba",
+        "cómo me preparo para la prueba nacional"
       ],
       "respuesta": "Las pruebas nacionales se aplican según el calendario oficial del ministerio y el centro educativo informa a los estudiantes la fecha, el lugar y lo que deben llevar. Consulte con la dirección para la información de su grado.",
       "vigencia": "permanente"
