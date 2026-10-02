@@ -4,3 +4,5 @@ modelo/
 __pycache__/
 *.pyc
 .venv/
+.venv-conversion/
+node_modules/

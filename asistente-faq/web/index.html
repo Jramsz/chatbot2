@@ -29,10 +29,10 @@
     </div>
   </main>
 
-  <!-- TensorFlow.js desde CDN durante el desarrollo. Para produccion, la
-       propuesta establece empaquetarlo localmente: evita fallos por politicas
-       de seguridad del sitio anfitrion y elimina una dependencia externa. -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <!-- TensorFlow.js empaquetado localmente (lib/tf.min.js, version 4.22.0,
+       licencia Apache 2.0): sin dependencia de un CDN ni de un dominio fijo,
+       para que el entregable funcione en cualquier alojamiento. -->
+  <script src="lib/tf.min.js"></script>
   <script src="preprocesamiento.js"></script>
   <script src="motor.js"></script>
   <script src="interfaz.js"></script>
