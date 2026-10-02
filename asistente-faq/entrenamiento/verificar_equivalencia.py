@@ -47,6 +47,7 @@ CASOS = [
     "ñ",
     "123 456",
     "reposicion de documentos academicos oficiales",
+    "mi ni\u006e\u0303o perdi\u0301 la boleta",  # ñ y í descompuestas (NFD)
 ]
 
 
