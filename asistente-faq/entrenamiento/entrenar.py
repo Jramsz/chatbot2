@@ -3,11 +3,11 @@ Entrena el clasificador de intenciones y exporta todo lo que necesita el navegad
 
 Flujo:
     1. valida el catalogo (llama a validar.py)
-    2. construye vocabulario y matriz de bolsa de palabras
-    3. separa un conjunto de prueba
-    4. entrena la red
-    5. evalua y aplica el umbral de aceptacion
-    6. guarda modelo Keras, vocabulario, clases y respuestas
+    2. mide la exactitud con validacion cruzada (el vocabulario de cada
+       pliegue se construye solo con sus patrones de entrenamiento)
+    3. aplica el umbral de aceptacion sobre la exactitud media
+    4. si lo supera, reentrena con TODOS los patrones
+    5. guarda modelo Keras, vocabulario, clases y respuestas
 
 Uso:
     python entrenamiento/entrenar.py
@@ -35,7 +35,7 @@ SALIDA_MODELO = RAIZ / "modelo"
 SALIDA_WEB = RAIZ / "web" / "datos"
 
 SEMILLA = 42
-PROPORCION_PRUEBA = 0.2   # patrones reservados por intencion
+PLIEGUES = 5              # validacion cruzada: cada patron se prueba una vez
 EPOCAS = 300
 LOTE = 8
 EXACTITUD_MINIMA = 0.80   # acordar con el supervisor tras la linea base
@@ -54,49 +54,54 @@ def cargar_catalogo():
     return datos
 
 
-def construir_datos(datos):
-    """Devuelve vocabulario, clases y los conjuntos de entrenamiento y prueba."""
-    random.seed(SEMILLA)
+def asignar_pliegues(datos):
+    """Reparte los patrones de cada intencion en PLIEGUES grupos parejos.
 
+    Devuelve las clases y una lista de (tokens, clase, pliegue). Repartir por
+    intencion (y no al azar sobre el total) garantiza que cada intencion
+    aparezca en casi todos los pliegues de prueba.
+    """
+    azar = random.Random(SEMILLA)
     clases = [i["id"] for i in datos["intenciones"]]
-    indice_clase = {c: n for n, c in enumerate(clases)}
-
-    entrenamiento, prueba = [], []
-    vocabulario = set()
-
-    for intencion in datos["intenciones"]:
+    ejemplos = []
+    for clase, intencion in enumerate(datos["intenciones"]):
         patrones = list(intencion["patrones"])
-        random.shuffle(patrones)
-
-        # Al menos un patron reservado para prueba, y al menos dos para entrenar.
-        n_prueba = max(1, int(round(len(patrones) * PROPORCION_PRUEBA)))
-        n_prueba = min(n_prueba, max(0, len(patrones) - 2))
-
+        azar.shuffle(patrones)
         for n, patron in enumerate(patrones):
-            tokens = normalizar(patron)
-            destino = prueba if n < n_prueba else entrenamiento
-            destino.append((tokens, indice_clase[intencion["id"]]))
-            # El vocabulario se construye SOLO con los patrones de
-            # entrenamiento: incluir los de prueba filtraria informacion.
-            if destino is entrenamiento:
-                vocabulario.update(tokens)
+            ejemplos.append((normalizar(patron), clase, n % PLIEGUES))
+    return clases, ejemplos
 
-    vocabulario = sorted(vocabulario)
+
+def construir_vocabulario(ejemplos):
+    """Terminos ordenados de los ejemplos dados.
+
+    Se construye SOLO con los ejemplos de entrenamiento: incluir los de
+    prueba filtraria informacion y inflaria la exactitud medida.
+    """
+    return sorted({t for tokens, _, _ in ejemplos for t in tokens})
+
+
+def vectorizar(ejemplos, vocabulario, n_clases):
     posicion = {t: n for n, t in enumerate(vocabulario)}
+    X = np.zeros((len(ejemplos), len(vocabulario)), dtype="float32")
+    y = np.zeros((len(ejemplos), n_clases), dtype="float32")
+    for fila, (tokens, clase, _) in enumerate(ejemplos):
+        for t in tokens:
+            if t in posicion:
+                X[fila, posicion[t]] = 1.0
+        y[fila, clase] = 1.0
+    return X, y
 
-    def vectorizar(conjunto):
-        X = np.zeros((len(conjunto), len(vocabulario)), dtype="float32")
-        y = np.zeros((len(conjunto), len(clases)), dtype="float32")
-        for fila, (tokens, clase) in enumerate(conjunto):
-            for t in tokens:
-                if t in posicion:
-                    X[fila, posicion[t]] = 1.0
-            y[fila, clase] = 1.0
-        return X, y
 
-    X_ent, y_ent = vectorizar(entrenamiento)
-    X_pru, y_pru = vectorizar(prueba)
-    return vocabulario, clases, (X_ent, y_ent), (X_pru, y_pru)
+def entrenar_modelo(X, y, semilla):
+    import tensorflow as tf
+
+    # Misma semilla, mismo modelo: sin esto la exactitud cambia entre corridas
+    # y no se puede saber si un cambio en el catalogo mejoro o empeoro algo.
+    tf.keras.utils.set_random_seed(semilla)
+    modelo = construir_modelo(X.shape[1], y.shape[1])
+    modelo.fit(X, y, epochs=EPOCAS, batch_size=LOTE, verbose=0)
+    return modelo
 
 
 def construir_modelo(n_entrada, n_salida):
@@ -119,58 +124,70 @@ def construir_modelo(n_entrada, n_salida):
     return modelo
 
 
-def informe_por_intencion(modelo, X, y, clases):
-    """Lista las intenciones que el modelo nunca acierta en el conjunto dado."""
-    if len(X) == 0:
-        return []
-    predicciones = modelo.predict(X, verbose=0)
-    aciertos, totales = {}, {}
-    for fila in range(len(X)):
-        real = clases[int(np.argmax(y[fila]))]
-        pred = clases[int(np.argmax(predicciones[fila]))]
-        totales[real] = totales.get(real, 0) + 1
-        if real == pred:
-            aciertos[real] = aciertos.get(real, 0) + 1
-    return [c for c in totales if aciertos.get(c, 0) == 0]
+def validacion_cruzada(clases, ejemplos):
+    """Exactitud por pliegue y aciertos acumulados por intencion."""
+    exactitudes = []
+    aciertos = [0] * len(clases)
+    totales = [0] * len(clases)
+    huerfanos = 0
+
+    for k in range(PLIEGUES):
+        entrenamiento = [e for e in ejemplos if e[2] != k]
+        prueba = [e for e in ejemplos if e[2] == k]
+        vocabulario = construir_vocabulario(entrenamiento)
+        X_ent, y_ent = vectorizar(entrenamiento, vocabulario, len(clases))
+        X_pru, y_pru = vectorizar(prueba, vocabulario, len(clases))
+
+        # Un patron de prueba sin ningun termino conocido es imposible de
+        # clasificar; se cuenta aparte para saber cuanto pesa en la medida.
+        huerfanos += int((X_pru.sum(axis=1) == 0).sum())
+
+        modelo = entrenar_modelo(X_ent, y_ent, SEMILLA + k)
+        pred = np.argmax(modelo.predict(X_pru, verbose=0), axis=1)
+        real = np.argmax(y_pru, axis=1)
+        exactitudes.append(float((pred == real).mean()))
+        for r, p in zip(real, pred):
+            totales[r] += 1
+            aciertos[r] += int(r == p)
+        print(f"  pliegue {k + 1}/{PLIEGUES}: {exactitudes[-1]:.3f}")
+
+    por_intencion = [
+        (aciertos[c] / totales[c], clases[c]) for c in range(len(clases)) if totales[c]
+    ]
+    return exactitudes, sorted(por_intencion), huerfanos
 
 
 def main():
     datos = cargar_catalogo()
-    vocabulario, clases, (X_ent, y_ent), (X_pru, y_pru) = construir_datos(datos)
+    clases, ejemplos = asignar_pliegues(datos)
+    print(f"Intenciones: {len(clases)}   Patrones: {len(ejemplos)}")
+    print(f"Validacion cruzada de {PLIEGUES} pliegues:")
 
-    print(f"Vocabulario: {len(vocabulario)} terminos")
-    print(f"Intenciones: {len(clases)}")
-    print(f"Entrenamiento: {len(X_ent)} patrones   Prueba: {len(X_pru)} patrones")
-
-    # Un patron de prueba cuyos tokens no aparecen en el vocabulario es
-    # imposible de clasificar: su vector es todo ceros. No es un error, pero
-    # baja la exactitud medida y conviene saberlo.
-    huerfanos = int((X_pru.sum(axis=1) == 0).sum()) if len(X_pru) else 0
+    exactitudes, por_intencion, huerfanos = validacion_cruzada(clases, ejemplos)
+    media = float(np.mean(exactitudes))
+    print(f"\nExactitud: {media:.3f} +/- {float(np.std(exactitudes)):.3f} "
+          f"(minimo {min(exactitudes):.3f}, maximo {max(exactitudes):.3f})")
     if huerfanos:
-        print(
-            f"AVISO: {huerfanos} patron(es) de prueba no comparten ningun "
-            "termino con el vocabulario de entrenamiento. Son inclasificables "
-            "por construccion; conviene ampliar los patrones de esas intenciones."
-        )
+        print(f"AVISO: {huerfanos} patron(es) de prueba no compartian ningun "
+              "termino con el vocabulario de entrenamiento.")
+    print("Intenciones con peor acierto (agregar mas patrones):")
+    for acierto, clase in por_intencion[:3]:
+        print(f"  - {clase}: {acierto:.2f}")
 
-    modelo = construir_modelo(len(vocabulario), len(clases))
-    modelo.fit(X_ent, y_ent, epochs=EPOCAS, batch_size=LOTE, verbose=0)
-
-    _, exactitud = modelo.evaluate(X_pru, y_pru, verbose=0)
-    print(f"\nExactitud sobre el conjunto de prueba: {exactitud:.3f}")
-
-    sin_acierto = informe_por_intencion(modelo, X_pru, y_pru, clases)
-    if sin_acierto:
-        print(f"Intenciones sin ningun acierto ({len(sin_acierto)}):")
-        for c in sin_acierto:
-            print(f"  - {c}  (agregar mas patrones)")
-
-    if exactitud < EXACTITUD_MINIMA:
+    if media < EXACTITUD_MINIMA:
         print(
             f"\nLa exactitud esta por debajo del umbral de {EXACTITUD_MINIMA:.2f}. "
             "No se publica; se conserva la version anterior."
         )
         return 1
+
+    # El modelo publicado se entrena con TODOS los patrones: los pliegues solo
+    # sirven para medir. Descartar patrones en el modelo final desperdicia datos.
+    vocabulario = construir_vocabulario(ejemplos)
+    X, y = vectorizar(ejemplos, vocabulario, len(clases))
+    print(f"\nEntrenando el modelo final: {len(vocabulario)} terminos, "
+          f"{len(ejemplos)} patrones.")
+    modelo = entrenar_modelo(X, y, SEMILLA)
 
     # ---- Exportacion ----
     SALIDA_MODELO.mkdir(exist_ok=True)
