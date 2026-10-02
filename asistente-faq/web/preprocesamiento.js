@@ -87,6 +87,7 @@ function recortarSufijo(palabra) {
 /* Convierte una frase en su lista ordenada de tokens.
  * Pasos en el mismo orden exacto que la version Python. */
 function normalizar(texto) {
+  texto = texto.normalize("NFC");
   texto = texto.toLowerCase();
   texto = quitarAcentos(texto);
   texto = soloAlfanumerico(texto);

@@ -17,6 +17,8 @@ exacto en JavaScript, y reimplementarlos introduce el riesgo de divergencia.
 Las reglas de abajo son simples, deterministas y portables por construccion.
 """
 
+import unicodedata
+
 # Vocales acentuadas y caracteres propios del espanol.
 # Se translitera para que "perdi" y "perdí" produzcan el mismo token.
 ACENTOS = {
@@ -95,6 +97,7 @@ def normalizar(texto):
     """Convierte una frase en su lista ordenada de tokens.
 
     Pasos, en este orden exacto:
+      0. forma NFC: algunos teclados escriben "ñ" como "n" + tilde combinada
       1. minusculas
       2. transliteracion de acentos y enes
       3. eliminacion de todo caracter no alfanumerico
@@ -103,6 +106,7 @@ def normalizar(texto):
       6. descarte de tokens de menos de TOKEN_MINIMO caracteres
       7. recorte de sufijo
     """
+    texto = unicodedata.normalize("NFC", texto)
     texto = texto.lower()
     texto = quitar_acentos(texto)
     texto = solo_alfanumerico(texto)
