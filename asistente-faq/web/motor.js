@@ -57,7 +57,8 @@ const Motor = (() => {
   /* Clasifica una consulta escrita libremente.
    * Devuelve { estado, intencion, confianza }:
    *   estado "respuesta"     -> la confianza supera el umbral
-   *   estado "sin_confianza" -> hay candidata pero no alcanza el umbral
+   *   estado "sin_confianza" -> no alcanza el umbral, o la candidata ya no
+   *                             existe en el catalogo (intencion null)
    *   estado "sin_modelo"    -> el modelo no esta disponible
    *   estado "sin_terminos"  -> la consulta no contiene ningun termino conocido
    */
@@ -82,7 +83,14 @@ const Motor = (() => {
       return { indice: mejor, confianza: probabilidades[mejor] };
     });
 
+    // El modelo puede conocer una intencion que ya no esta en el catalogo
+    // (se retiro la pregunta y aun no se reentrena). No hay respuesta que
+    // entregar: se trata como falta de confianza y se deriva al menu.
     const intencion = porId.get(clases[indice]) || null;
+    if (!intencion) {
+      return { estado: "sin_confianza", intencion: null, confianza };
+    }
+
     return {
       estado: confianza >= UMBRAL_CONFIANZA ? "respuesta" : "sin_confianza",
       intencion,

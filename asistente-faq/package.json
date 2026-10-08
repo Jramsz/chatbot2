@@ -5,7 +5,8 @@
   "packageManager": "pnpm@10.28.0",
   "description": "Asistente de preguntas frecuentes del MINEDUCYT. pnpm solo gestiona las librerias del navegador; el widget entregado es estatico.",
   "scripts": {
-    "libs": "node scripts/copiar-libs.js"
+    "libs": "node scripts/copiar-libs.js",
+    "test": "node --test"
   },
   "dependencies": {
     "@tensorflow/tfjs": "4.22.0"
