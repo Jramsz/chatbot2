@@ -146,7 +146,9 @@ pnpm install --frozen-lockfile && pnpm run libs         # librerías del navegad
 python entrenamiento/validar.py                 # valida el catálogo
 python entrenamiento/verificar_equivalencia.py  # Python contra JS (requiere Node)
 python entrenamiento/entrenar.py                # entrena, evalúa y exporta
+python entrenamiento/actualizar_catalogo.py    # solo catálogo, sin reentrenar
 pnpm test                                       # pruebas del motor (solo Node)
+python -m unittest discover -s pruebas -p "test_*.py"   # pruebas de Python
 
 # tensorflowjs va en su propio entorno (.venv-conversion) por el conflicto con
 # el TensorFlow de requirements.txt.
