@@ -120,7 +120,7 @@ const Interfaz = (() => {
 
     const r = Motor.clasificar(texto);
 
-    if (r.estado === "respuesta") {
+    if (r.estado === "respuesta" && r.intencion) {
       responder(r.intencion);
       return;
     }
