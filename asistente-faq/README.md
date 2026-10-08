@@ -104,9 +104,12 @@ modelo clasifica mal sin emitir ningún error visible.
 python entrenamiento/entrenar.py
 ```
 
-Entrena, evalúa sobre un conjunto de prueba reservado y exporta el modelo junto
-con el vocabulario, las clases y el catálogo. Si la exactitud queda por debajo
-del umbral definido en `EXACTITUD_MINIMA`, el proceso se detiene sin publicar.
+Mide la exactitud con validación cruzada de 5 pliegues y, si la media alcanza
+`EXACTITUD_MINIMA`, reentrena con todos los patrones y exporta el modelo junto
+con el vocabulario, las clases y el catálogo. Si queda por debajo, se detiene
+sin publicar. Tarda unos minutos.
+
+Las intenciones sin patrones no se entrenan: solo aparecen en el menú.
 
 ### 4. Convertir el modelo para el navegador
 
@@ -172,5 +175,4 @@ subdirectorio sin modificaciones.
 - [ ] Acordar `EXACTITUD_MINIMA` y `UMBRAL_CONFIANZA` con el supervisor
 - [ ] Obtener el catálogo del MINEDUCYT ordenado por frecuencia de consulta
 - [ ] Automatizar validación, entrenamiento y conversión en el flujo de publicación
-- [ ] Empaquetar TensorFlow.js localmente para producción
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados

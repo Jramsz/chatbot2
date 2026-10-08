@@ -20,7 +20,9 @@ from preprocesamiento import normalizar
 RAIZ = Path(__file__).resolve().parent.parent
 CATALOGO = RAIZ / "contenido" / "intenciones.json"
 
-PATRONES_MINIMOS = 4  # por debajo de esto el modelo no aprende la intencion
+# Una intencion con patrones necesita al menos este numero para que el modelo
+# la aprenda. Una intencion SIN patrones es valida: queda solo en el menu.
+PATRONES_MINIMOS = 4
 
 
 def validar(datos):
@@ -73,10 +75,15 @@ def validar(datos):
             )
 
         patrones = intencion.get("patrones", [])
-        if len(patrones) < PATRONES_MINIMOS:
+        if not patrones:
+            avisos.append(
+                f"[{id_}] no tiene patrones: aparece en el menu pero el "
+                "modelo no la reconoce al escribirla."
+            )
+        elif len(patrones) < PATRONES_MINIMOS:
             errores.append(
-                f"[{id_}] tiene {len(patrones)} patrones; el minimo es "
-                f"{PATRONES_MINIMOS}."
+                f"[{id_}] tiene {len(patrones)} patrones; agregue al menos "
+                f"{PATRONES_MINIMOS} o dejela sin patrones."
             )
 
         if len(set(patrones)) != len(patrones):

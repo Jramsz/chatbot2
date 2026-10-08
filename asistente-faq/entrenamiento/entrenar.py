@@ -60,11 +60,15 @@ def asignar_pliegues(datos):
     Devuelve las clases y una lista de (tokens, clase, pliegue). Repartir por
     intencion (y no al azar sobre el total) garantiza que cada intencion
     aparezca en casi todos los pliegues de prueba.
+
+    Las intenciones sin patrones no son clases del modelo: solo viven en el
+    menu. Asi el catalogo puede crecer sin reentrenar para cada pregunta.
     """
     azar = random.Random(SEMILLA)
-    clases = [i["id"] for i in datos["intenciones"]]
+    entrenables = [i for i in datos["intenciones"] if i.get("patrones")]
+    clases = [i["id"] for i in entrenables]
     ejemplos = []
-    for clase, intencion in enumerate(datos["intenciones"]):
+    for clase, intencion in enumerate(entrenables):
         patrones = list(intencion["patrones"])
         azar.shuffle(patrones)
         for n, patron in enumerate(patrones):

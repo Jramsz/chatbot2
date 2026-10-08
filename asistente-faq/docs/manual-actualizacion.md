@@ -34,7 +34,7 @@ formas de preguntarlas y las respuestas oficiales.
 | `subtema` | Agrupación dentro de la categoría. |
 | `prioridad` | Qué tan frecuente es la consulta: 1 es lo más preguntado. Determina qué entra antes al entrenamiento. |
 | `pregunta` | Cómo se muestra la pregunta en el menú. |
-| `patrones` | Formas en que un estudiante podría escribir la consulta. Mínimo cuatro. |
+| `patrones` | Formas en que un estudiante podría escribir la consulta. Mínimo cuatro, o ninguno (ver más abajo). Entre uno y tres no es válido. |
 | `respuesta` | El texto oficial. Debe entenderse por sí solo. |
 | `vigencia` | `permanente`, o el año escolar si la respuesta caduca. |
 
@@ -53,20 +53,26 @@ Cuanto más variados, mejor funciona.
 
 ## Preguntas sin patrones
 
-Una pregunta **sin** patrones igual aparece en el menú y es accesible para
-cualquier estudiante. Lo único que no hace es reconocerse cuando alguien la
-escribe libremente.
+Una pregunta **sin** patrones (`"patrones": []`) igual aparece en el menú y es
+accesible para cualquier estudiante. Lo único que no hace es reconocerse cuando
+alguien la escribe libremente. El validador solo muestra un aviso.
+
+Si una pregunta tiene patrones, deben ser **al menos cuatro**; con uno, dos o
+tres el validador la rechaza, porque el modelo no alcanzaría a aprenderla.
 
 Esto permite ampliar el catálogo rápido: agregue la pregunta y la respuesta
 ahora, y los patrones cuando haya tiempo.
 
 ## Después de editar
 
-Al guardar los cambios, el proceso automático valida el archivo, reentrena el
-modelo y publica la nueva versión.
+Envíe el archivo editado al equipo técnico. Por ahora, el equipo valida el
+archivo, reentrena el modelo y publica la nueva versión con tres comandos
+(`validar.py`, `entrenar.py` y la conversión para el navegador). La
+automatización de este flujo está pendiente.
 
-Si el archivo tiene algún error, **no se publica nada** y se recibe un aviso. La
-versión anterior sigue funcionando mientras se corrige.
+Si el archivo tiene algún error, **no se publica nada** y la versión anterior
+sigue funcionando mientras se corrige. Si el modelo no alcanza la exactitud
+mínima, tampoco se publica.
 
 ## Qué no hacer
 
