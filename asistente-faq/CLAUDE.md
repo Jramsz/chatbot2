@@ -189,7 +189,8 @@ README.md                       Presentación y pasos de uso.
 - JavaScript sin framework. El widget debe cargar rápido en conexiones móviles
   lentas y seguir funcionando durante años sin mantenimiento de dependencias.
 - El `id` de una intención es permanente. No se reutiliza ni se modifica una
-  vez publicado.
+  vez publicado. Para quitar una pregunta no se borra: se marca
+  `"activa": false` (sale del menú y del entrenamiento, el id queda reservado).
 
 ---
 

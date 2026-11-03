@@ -26,6 +26,7 @@ import numpy as np
 
 from catalogo import RAIZ, SALIDA_WEB, cargar_catalogo, catalogo_para_web, escribir_json
 from preprocesamiento import normalizar
+from validar import esta_activa
 
 SALIDA_MODELO = RAIZ / "modelo"
 
@@ -43,11 +44,13 @@ def asignar_pliegues(datos):
     intencion (y no al azar sobre el total) garantiza que cada intencion
     aparezca en casi todos los pliegues de prueba.
 
-    Las intenciones sin patrones no son clases del modelo: solo viven en el
-    menu. Asi el catalogo puede crecer sin reentrenar para cada pregunta.
+    Las intenciones sin patrones o retiradas no son clases del modelo: solo
+    viven en el menu (o en ninguna parte, si estan retiradas). Asi el catalogo puede crecer sin reentrenar para cada pregunta.
     """
     azar = random.Random(SEMILLA)
-    entrenables = [i for i in datos["intenciones"] if i.get("patrones")]
+    entrenables = [
+        i for i in datos["intenciones"] if esta_activa(i) and i.get("patrones")
+    ]
     clases = [i["id"] for i in entrenables]
     ejemplos = []
     for clase, intencion in enumerate(entrenables):

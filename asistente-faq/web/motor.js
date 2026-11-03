@@ -17,8 +17,12 @@ const Motor = (() => {
   let modelo = null;        // puede quedar en null: el menu sigue funcionando
   let porId = new Map();
 
+  // "no-cache" obliga a revalidar con el servidor: una respuesta corregida no
+  // debe tardar dias en verse porque el navegador guardo la version vieja.
+  const REVALIDAR = { cache: "no-cache" };
+
   async function cargarJson(ruta) {
-    const r = await fetch(ruta);
+    const r = await fetch(ruta, REVALIDAR);
     if (!r.ok) throw new Error(`No se pudo cargar ${ruta} (${r.status})`);
     return r.json();
   }
@@ -41,7 +45,24 @@ const Motor = (() => {
    * menu; se registra el fallo pero no se interrumpe el servicio. */
   async function cargarModelo() {
     try {
-      modelo = await tf.loadLayersModel("modelo/model.json");
+      const cargado = await tf.loadLayersModel("modelo/model.json", {
+        requestInit: REVALIDAR,
+      });
+
+      // Invariante 6: modelo, vocabulario y clases deben ser de la misma
+      // generacion. Si se subieron por separado y no coinciden, las
+      // predicciones saldrian desalineadas sin ningun error: es preferible
+      // operar solo con el menu.
+      const entradas = cargado.inputs[0].shape[1];
+      const salidas = cargado.outputs[0].shape[1];
+      if (entradas !== vocabulario.length || salidas !== clases.length) {
+        throw new Error(
+          `El modelo (${entradas} entradas, ${salidas} salidas) no coincide con ` +
+          `vocabulario.json (${vocabulario.length}) y clases.json (${clases.length}).`
+        );
+      }
+
+      modelo = cargado;
       return true;
     } catch (e) {
       console.warn("El modelo no se pudo cargar; el asistente opera con el menu.", e);
