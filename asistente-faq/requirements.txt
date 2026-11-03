@@ -3,7 +3,12 @@
 tensorflow==2.17.0
 numpy==1.26.4
 
+# Keras 2: el .h5 de Keras 3 no se puede convertir a TensorFlow.js.
+tf-keras==2.17.0
+
 # Conversion al formato de navegador.
 # Instalarlo en un entorno virtual aparte (.venv-conversion): arrastra su propio subconjunto de
 # TensorFlow y puede entrar en conflicto con el de arriba.
-# tensorflowjs==4.22.0
+# tensorflowjs==4.22.0 ydf==0.13.0
+# (ydf se fija porque la version mas reciente choca con el protobuf que instala
+# tensorflowjs y el conversor falla al arrancar.)

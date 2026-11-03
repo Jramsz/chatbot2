@@ -140,7 +140,7 @@ verificación de equivalencia.
 python -m venv .venv && source .venv/bin/activate   # entrenamiento
 pip install -r requirements.txt
 python -m venv .venv-conversion                     # solo conversión
-.venv-conversion/bin/pip install tensorflowjs==4.22.0
+.venv-conversion/bin/pip install tensorflowjs==4.22.0 ydf==0.13.0   # ydf fijado: ver nota
 pnpm install --frozen-lockfile && pnpm run libs         # librerías del navegador
 
 python entrenamiento/validar.py                 # valida el catálogo

@@ -19,6 +19,7 @@ Tras esto, convertir el modelo para el navegador:
 Codigo de salida 0 si el modelo alcanza el umbral, 1 si no.
 """
 
+import os
 import random
 import sys
 
@@ -29,6 +30,11 @@ from preprocesamiento import normalizar
 from validar import esta_activa
 
 SALIDA_MODELO = RAIZ / "modelo"
+
+# El modelo se guarda en formato Keras 2: TensorFlow.js no puede leer el .h5 de
+# Keras 3 (pesos con otro nombre y capa de entrada con otra clave). Debe
+# fijarse ANTES de que se importe tensorflow.
+os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
 SEMILLA = 42
 PLIEGUES = 5              # validacion cruzada: cada patron se prueba una vez
