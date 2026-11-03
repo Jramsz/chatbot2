@@ -127,6 +127,17 @@ cd web && python -m http.server 8000
 Abrir `http://localhost:8000`. Un servidor local es necesario: abrir el archivo
 directamente impide que el navegador cargue el modelo y los datos.
 
+### Actualización rápida: solo cambió un texto o se agregó una pregunta al menú
+
+```bash
+python entrenamiento/actualizar_catalogo.py --revisar   # muestra los cambios
+python entrenamiento/actualizar_catalogo.py             # valida y regenera catalogo.json
+```
+
+Actualiza únicamente `web/datos/catalogo.json`, sin TensorFlow y sin reentrenar.
+Publicar solo ese archivo. Si hay que agregar o cambiar patrones, usar el flujo
+completo (pasos 3 y 4).
+
 ---
 
 ## Decisiones de diseño

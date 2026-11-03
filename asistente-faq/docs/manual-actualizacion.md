@@ -65,10 +65,20 @@ ahora, y los patrones cuando haya tiempo.
 
 ## Después de editar
 
-Envíe el archivo editado al equipo técnico. Por ahora, el equipo valida el
-archivo, reentrena el modelo y publica la nueva versión con tres comandos
-(`validar.py`, `entrenar.py` y la conversión para el navegador). La
-automatización de este flujo está pendiente.
+Envíe el archivo editado al equipo técnico. Hay dos caminos, según lo que
+cambió:
+
+| Qué cambió | Qué hace el equipo | Tiempo |
+|---|---|---|
+| El texto de una pregunta o respuesta, o se agregó una pregunta **sin patrones**, o se movió de categoría | `actualizar_catalogo.py`: valida y regenera solo `catalogo.json`. Se sube ese único archivo. | Segundos |
+| Se agregaron o cambiaron **patrones**, o se agregó una pregunta con patrones | `entrenar.py` y la conversión del modelo. Se sube toda la carpeta `web/`. | Minutos |
+
+Mientras no se reentrene, una pregunta nueva con patrones **aparece en el menú**
+y se puede consultar por categorías; solo falta que el asistente la reconozca al
+escribirla. Si se quita una pregunta que el modelo ya conoce, el menú deja de
+mostrarla y, si alguien la escribe, el asistente lo deriva al menú.
+
+La automatización de este flujo está pendiente.
 
 Si el archivo tiene algún error, **no se publica nada** y la versión anterior
 sigue funcionando mientras se corrige. Si el modelo no alcanza la exactitud

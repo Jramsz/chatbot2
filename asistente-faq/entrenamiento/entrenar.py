@@ -19,39 +19,21 @@ Tras esto, convertir el modelo para el navegador:
 Codigo de salida 0 si el modelo alcanza el umbral, 1 si no.
 """
 
-import json
 import random
 import sys
-from pathlib import Path
 
 import numpy as np
 
+from catalogo import RAIZ, SALIDA_WEB, cargar_catalogo, catalogo_para_web, escribir_json
 from preprocesamiento import normalizar
-from validar import validar
 
-RAIZ = Path(__file__).resolve().parent.parent
-CATALOGO = RAIZ / "contenido" / "intenciones.json"
 SALIDA_MODELO = RAIZ / "modelo"
-SALIDA_WEB = RAIZ / "web" / "datos"
 
 SEMILLA = 42
 PLIEGUES = 5              # validacion cruzada: cada patron se prueba una vez
 EPOCAS = 300
 LOTE = 8
 EXACTITUD_MINIMA = 0.80   # acordar con el supervisor tras la linea base
-
-
-def cargar_catalogo():
-    datos = json.loads(CATALOGO.read_text(encoding="utf-8"))
-    errores, avisos = validar(datos)
-    for a in avisos:
-        print(f"AVISO: {a}")
-    if errores:
-        print(f"\nEl catalogo tiene {len(errores)} error(es):")
-        for e in errores:
-            print(f"  - {e}")
-        sys.exit(1)
-    return datos
 
 
 def asignar_pliegues(datos):
@@ -201,31 +183,10 @@ def main():
 
     # El orden del vocabulario y de las clases es parte del contrato con el
     # navegador: si cambia sin reentrenar, las predicciones se desalinean.
-    (SALIDA_WEB / "vocabulario.json").write_text(
-        json.dumps(vocabulario, ensure_ascii=False), encoding="utf-8"
-    )
-    (SALIDA_WEB / "clases.json").write_text(
-        json.dumps(clases, ensure_ascii=False), encoding="utf-8"
-    )
+    escribir_json(SALIDA_WEB / "vocabulario.json", vocabulario)
+    escribir_json(SALIDA_WEB / "clases.json", clases)
 
-    # Catalogo reducido a lo que el navegador necesita mostrar.
-    catalogo_web = {
-        "version": datos.get("version"),
-        "categorias": datos["categorias"],
-        "intenciones": [
-            {
-                "id": i["id"],
-                "categoria": i["categoria"],
-                "subtema": i.get("subtema", ""),
-                "pregunta": i["pregunta"],
-                "respuesta": i["respuesta"],
-            }
-            for i in datos["intenciones"]
-        ],
-    }
-    (SALIDA_WEB / "catalogo.json").write_text(
-        json.dumps(catalogo_web, ensure_ascii=False), encoding="utf-8"
-    )
+    escribir_json(SALIDA_WEB / "catalogo.json", catalogo_para_web(datos))
 
     print(f"\nModelo guardado en {SALIDA_MODELO / 'modelo.h5'}")
     print(f"Datos para el navegador en {SALIDA_WEB}")
