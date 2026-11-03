@@ -37,6 +37,7 @@ formas de preguntarlas y las respuestas oficiales.
 | `patrones` | Formas en que un estudiante podría escribir la consulta. Mínimo cuatro, o ninguno (ver más abajo). Entre uno y tres no es válido. |
 | `respuesta` | El texto oficial. Debe entenderse por sí solo. |
 | `vigencia` | `permanente`, o el año escolar si la respuesta caduca. |
+| `activa` | Opcional. Solo se escribe `false` para **retirar** la pregunta (ver más abajo). |
 
 ## Cómo escribir buenos patrones
 
@@ -84,8 +85,31 @@ Si el archivo tiene algún error, **no se publica nada** y la versión anterior
 sigue funcionando mientras se corrige. Si el modelo no alcanza la exactitud
 mínima, tampoco se publica.
 
+## Cómo quitar una pregunta
+
+**No borre la entrada.** Agregue `"activa": false` a la pregunta:
+
+```json
+{
+  "id": "tramites-traslado",
+  "activa": false,
+  ...
+}
+```
+
+La pregunta deja de aparecer en el menú y deja de entrenarse, pero su `id`
+queda reservado y no puede usarse para otra pregunta. Si borra la entrada, el
+sistema lo avisa, porque más adelante alguien podría reutilizar ese `id`.
+
+Si se retira la última pregunta de una categoría, la categoría también deja de
+mostrarse. Para volver a mostrar una pregunta, quite la línea `"activa": false`.
+
+Si el modelo ya conocía la pregunta, mientras no se reentrene el asistente, si
+alguien la escribe, lo deriva al menú.
+
 ## Qué no hacer
 
+- No borrar una pregunta publicada: retírela con `"activa": false`.
 - No cambiar el `id` de una entrada existente.
 - No borrar las comas ni las llaves de la estructura.
 - No escribir una categoría que no exista en la lista de categorías.

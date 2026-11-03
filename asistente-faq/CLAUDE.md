@@ -140,7 +140,7 @@ verificación de equivalencia.
 python -m venv .venv && source .venv/bin/activate   # entrenamiento
 pip install -r requirements.txt
 python -m venv .venv-conversion                     # solo conversión
-.venv-conversion/bin/pip install tensorflowjs==4.22.0
+.venv-conversion/bin/pip install tensorflowjs==4.22.0 ydf==0.13.0   # ydf fijado: ver nota
 pnpm install --frozen-lockfile && pnpm run libs         # librerías del navegador
 
 python entrenamiento/validar.py                 # valida el catálogo
@@ -189,7 +189,8 @@ README.md                       Presentación y pasos de uso.
 - JavaScript sin framework. El widget debe cargar rápido en conexiones móviles
   lentas y seguir funcionando durante años sin mantenimiento de dependencias.
 - El `id` de una intención es permanente. No se reutiliza ni se modifica una
-  vez publicado.
+  vez publicado. Para quitar una pregunta no se borra: se marca
+  `"activa": false` (sale del menú y del entrenamiento, el id queda reservado).
 
 ---
 

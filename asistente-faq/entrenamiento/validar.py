@@ -25,6 +25,12 @@ CATALOGO = RAIZ / "contenido" / "intenciones.json"
 PATRONES_MINIMOS = 4
 
 
+def esta_activa(intencion):
+    """Una intencion con "activa": false esta retirada: no aparece en el menu
+    ni se entrena, pero su id sigue reservado y no puede reutilizarse."""
+    return intencion.get("activa", True) is not False
+
+
 def validar(datos):
     errores = []
     avisos = []
@@ -38,15 +44,20 @@ def validar(datos):
         errores.append("No hay intenciones definidas.")
         return errores, avisos
 
-    # Identificadores duplicados
+    # Identificadores duplicados (tambien entre retiradas: el id esta reservado)
     for id_, veces in Counter(i.get("id") for i in intenciones).items():
         if veces > 1:
             errores.append(f"Identificador duplicado: '{id_}' aparece {veces} veces.")
+
+    if not any(esta_activa(i) for i in intenciones):
+        errores.append("Todas las intenciones estan retiradas (activa: false).")
 
     # Patrones que aparecen en mas de una intencion: el modelo recibe
     # senales contradictorias y aprende mal ambas.
     ubicacion = {}
     for intencion in intenciones:
+        if not esta_activa(intencion):
+            continue
         for patron in intencion.get("patrones", []):
             clave = " ".join(normalizar(patron))
             if not clave:
@@ -69,10 +80,20 @@ def validar(datos):
             if not str(intencion.get(campo, "")).strip():
                 errores.append(f"[{id_}] campo obligatorio vacio: '{campo}'.")
 
+        if "activa" in intencion and not isinstance(intencion["activa"], bool):
+            errores.append(f"[{id_}] 'activa' debe ser true o false.")
+
+        # Invariante 3: una sola respuesta por intencion, nunca una lista.
+        if not isinstance(intencion.get("respuesta", ""), str):
+            errores.append(f"[{id_}] 'respuesta' debe ser un texto, no una lista.")
+
         if intencion.get("categoria") not in categorias:
             errores.append(
                 f"[{id_}] categoria inexistente: '{intencion.get('categoria')}'."
             )
+
+        if not esta_activa(intencion):
+            continue
 
         patrones = intencion.get("patrones", [])
         if not patrones:

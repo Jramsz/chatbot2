@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from validar import validar
+from validar import esta_activa, validar
 
 RAIZ = Path(__file__).resolve().parent.parent
 CATALOGO = RAIZ / "contenido" / "intenciones.json"
@@ -32,10 +32,17 @@ def cargar_catalogo(ruta=CATALOGO):
 
 
 def catalogo_para_web(datos):
-    """Catalogo reducido a lo que el navegador necesita: sin los patrones."""
+    """Catalogo reducido a lo que el navegador necesita: sin los patrones.
+
+    Las intenciones retiradas (activa: false) no se publican, y tampoco las
+    categorias que quedan sin ninguna intencion activa: un menu con una
+    categoria vacia deja al estudiante sin salida.
+    """
+    activas = [i for i in datos["intenciones"] if esta_activa(i)]
+    usadas = {i["categoria"] for i in activas}
     return {
         "version": datos.get("version"),
-        "categorias": datos["categorias"],
+        "categorias": [c for c in datos["categorias"] if c["id"] in usadas],
         "intenciones": [
             {
                 "id": i["id"],
@@ -44,7 +51,7 @@ def catalogo_para_web(datos):
                 "pregunta": i["pregunta"],
                 "respuesta": i["respuesta"],
             }
-            for i in datos["intenciones"]
+            for i in activas
         ],
     }
 

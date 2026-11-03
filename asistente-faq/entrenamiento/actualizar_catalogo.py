@@ -19,6 +19,7 @@ Codigo de salida 0 si todo esta bien, 1 si el catalogo tiene errores.
 import json
 import sys
 
+from validar import esta_activa
 from catalogo import (
     CATALOGO,
     SALIDA_WEB,
@@ -50,12 +51,25 @@ def comparar(nuevo, anterior):
     return agregadas, retiradas, cambiadas
 
 
+def ids_borrados(datos, anterior):
+    """Ids publicados antes que ya no estan en el archivo (ni como retirados).
+
+    El id de una pregunta publicada es permanente: si se borra la entrada, nada
+    impide que alguien reutilice el id mas adelante con otra pregunta. Retirar
+    con "activa": false deja el id reservado.
+    """
+    en_archivo = {i["id"] for i in datos["intenciones"]}
+    return [i["id"] for i in (anterior or {}).get("intenciones", [])
+            if i["id"] not in en_archivo]
+
+
 def avisos_de_modelo(datos, clases_entrenadas):
     """Diferencias entre el catalogo y lo que el modelo publicado conoce."""
     if clases_entrenadas is None:
         return []
-    ids = {i["id"] for i in datos["intenciones"]}
-    con_patrones = {i["id"] for i in datos["intenciones"] if i.get("patrones")}
+    activas = [i for i in datos["intenciones"] if esta_activa(i)]
+    ids = {i["id"] for i in activas}
+    con_patrones = {i["id"] for i in activas if i.get("patrones")}
     avisos = []
     for c in clases_entrenadas:
         if c not in ids:
@@ -90,6 +104,13 @@ def main(argv):
             print(f"{etiqueta} ({len(ids)}): " + ", ".join(ids))
     if anterior is not None and not (agregadas or retiradas or cambiadas):
         print("Sin cambios en preguntas ni respuestas.")
+
+    for id_ in ids_borrados(datos, anterior):
+        print(
+            f"AVISO: '{id_}' se borro del archivo. Para retirar una pregunta "
+            "conserve la entrada y marque \"activa\": false, asi su id queda "
+            "reservado."
+        )
 
     for aviso in avisos_de_modelo(datos, leer_json(SALIDA_WEB / "clases.json")):
         print(f"AVISO: {aviso}")

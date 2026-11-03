@@ -67,7 +67,7 @@ pip install -r requirements.txt
 # Conversion a TensorFlow.js: entorno aparte, porque tensorflowjs arrastra su
 # propio subconjunto de TensorFlow y puede chocar con el de arriba.
 python -m venv .venv-conversion
-.venv-conversion/bin/pip install tensorflowjs==4.22.0
+.venv-conversion/bin/pip install tensorflowjs==4.22.0 ydf==0.13.0
 
 # Librerias del navegador (pnpm). Copia TensorFlow.js a web/lib/.
 pnpm install --frozen-lockfile
@@ -117,6 +117,14 @@ Las intenciones sin patrones no se entrenan: solo aparecen en el menú.
 .venv-conversion/bin/tensorflowjs_converter --input_format keras \
     modelo/modelo.h5 web/modelo
 ```
+
+Notas de la conversión (verificadas con TensorFlow.js 4.22.0):
+
+- El modelo se guarda en formato Keras 2 (`tf-keras`, ya incluido en
+  `requirements.txt`). El `.h5` de Keras 3 no sirve: TensorFlow.js falla al
+  cargarlo (capa de entrada y nombres de pesos distintos).
+- `ydf` se fija en 0.13.0 porque versiones más nuevas chocan con el protobuf de
+  `tensorflowjs` y el conversor ni siquiera arranca.
 
 ### 5. Probar en local
 

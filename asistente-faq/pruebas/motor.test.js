@@ -18,16 +18,30 @@ const CATALOGO = {
 
 // `clases` es lo que el modelo conoce; puede incluir ids que ya no estan en
 // el catalogo. `probabilidades` es la salida simulada del modelo.
-async function cargarMotor({ probabilidades, clases = ["vigente", "otra"], modelo = true }) {
+// `entradasModelo` y `salidasModelo` son las dimensiones del modelo simulado;
+// por defecto coinciden con el vocabulario (2) y las clases.
+async function cargarMotor({
+  probabilidades,
+  clases = ["vigente", "otra"],
+  modelo = true,
+  entradasModelo = 2,
+  salidasModelo = clases.length,
+  llamadas = { fetch: [], modelo: [] },
+}) {
   const datos = {
     "datos/catalogo.json": CATALOGO,
     "datos/vocabulario.json": ["nota", "boleta"],
     "datos/clases.json": clases,
   };
   const tf = {
-    loadLayersModel: async () => {
+    loadLayersModel: async (ruta, opciones) => {
+      llamadas.modelo.push(opciones);
       if (!modelo) throw new Error("modelo no disponible");
-      return { predict: () => ({ dataSync: () => probabilidades }) };
+      return {
+        inputs: [{ shape: [null, entradasModelo] }],
+        outputs: [{ shape: [null, salidasModelo] }],
+        predict: () => ({ dataSync: () => probabilidades }),
+      };
     },
     tidy: (f) => f(),
     tensor2d: (x) => x,
@@ -35,7 +49,10 @@ async function cargarMotor({ probabilidades, clases = ["vigente", "otra"], model
   const contexto = {
     tf,
     console: { ...console, warn() {} },
-    fetch: async (ruta) => ({ ok: true, json: async () => datos[ruta] }),
+    fetch: async (ruta, opciones) => {
+      llamadas.fetch.push(opciones);
+      return { ok: true, json: async () => datos[ruta] };
+    },
   };
   vm.createContext(contexto);
   for (const archivo of ["preprocesamiento.js", "motor.js"]) {
@@ -82,4 +99,25 @@ test("si el modelo falla, el menu sigue funcionando", async () => {
   assert.equal(motor.clasificar("nota boleta").estado, "sin_modelo");
   assert.equal(motor.categorias().length, 1);
   assert.equal(motor.preguntas("c", "s").length, 1);
+});
+
+test("si el modelo no coincide con vocabulario y clases, opera solo con el menu", async () => {
+  // Vocabulario de 2 terminos pero modelo de 5 entradas: se subieron por separado.
+  const motor = await cargarMotor({ probabilidades: [0.95, 0.05], entradasModelo: 5 });
+  assert.equal(motor.modeloDisponible(), false);
+  assert.equal(motor.clasificar("nota boleta").estado, "sin_modelo");
+  assert.equal(motor.preguntas("c", "s").length, 1);
+});
+
+test("si las clases no coinciden con las salidas del modelo, opera solo con el menu", async () => {
+  const motor = await cargarMotor({ probabilidades: [0.95, 0.05], salidasModelo: 7 });
+  assert.equal(motor.modeloDisponible(), false);
+});
+
+test("los archivos de datos y el modelo se piden con revalidacion", async () => {
+  const llamadas = { fetch: [], modelo: [] };
+  await cargarMotor({ probabilidades: [0.95, 0.05], llamadas });
+  assert.equal(llamadas.fetch.length, 3);
+  for (const opciones of llamadas.fetch) assert.equal(opciones.cache, "no-cache");
+  assert.equal(llamadas.modelo[0].requestInit.cache, "no-cache");
 });
