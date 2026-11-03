@@ -25,7 +25,15 @@ import sys
 
 import numpy as np
 
-from catalogo import RAIZ, SALIDA_WEB, cargar_catalogo, catalogo_para_web, escribir_json
+from catalogo import (
+    CLASE_FUERA,
+    RAIZ,
+    SALIDA_WEB,
+    cargar_catalogo,
+    cargar_fuera_de_alcance,
+    catalogo_para_web,
+    escribir_json,
+)
 from preprocesamiento import normalizar
 from validar import esta_activa
 
@@ -43,7 +51,7 @@ LOTE = 8
 EXACTITUD_MINIMA = 0.80   # acordar con el supervisor tras la linea base
 
 
-def asignar_pliegues(datos):
+def asignar_pliegues(datos, ajenas=()):
     """Reparte los patrones de cada intencion en PLIEGUES grupos parejos.
 
     Devuelve las clases y una lista de (tokens, clase, pliegue). Repartir por
@@ -64,6 +72,14 @@ def asignar_pliegues(datos):
         azar.shuffle(patrones)
         for n, patron in enumerate(patrones):
             ejemplos.append((normalizar(patron), clase, n % PLIEGUES))
+
+    # Las consultas ajenas forman una clase mas, la ultima. Sin ella, una
+    # consulta que comparte una sola palabra con el catalogo ("quien gano el
+    # partido") recibe confianza alta, porque el modelo solo conoce intenciones.
+    if ajenas:
+        clases.append(CLASE_FUERA)
+        for n, consulta in enumerate(ajenas):
+            ejemplos.append((normalizar(consulta), len(clases) - 1, n % PLIEGUES))
     return clases, ejemplos
 
 
@@ -122,6 +138,8 @@ def construir_modelo(n_entrada, n_salida):
 def validacion_cruzada(clases, ejemplos):
     """Exactitud por pliegue y aciertos acumulados por intencion."""
     exactitudes = []
+    fuera = clases.index(CLASE_FUERA) if CLASE_FUERA in clases else -1
+    ajenas_total = ajenas_derivadas = 0
     aciertos = [0] * len(clases)
     totales = [0] * len(clases)
     huerfanos = 0
@@ -140,22 +158,34 @@ def validacion_cruzada(clases, ejemplos):
         modelo = entrenar_modelo(X_ent, y_ent, SEMILLA + k)
         pred = np.argmax(modelo.predict(X_pru, verbose=0), axis=1)
         real = np.argmax(y_pru, axis=1)
-        exactitudes.append(float((pred == real).mean()))
+        # La exactitud se mide solo sobre el catalogo, comparable con las
+        # mediciones anteriores; las consultas ajenas se reportan aparte.
+        catalogo = real != fuera
+        exactitudes.append(float((pred[catalogo] == real[catalogo]).mean()))
+        ajenas_total += int((~catalogo).sum())
+        ajenas_derivadas += int((pred[~catalogo] == fuera).sum())
         for r, p in zip(real, pred):
             totales[r] += 1
             aciertos[r] += int(r == p)
         print(f"  pliegue {k + 1}/{PLIEGUES}: {exactitudes[-1]:.3f}")
 
     por_intencion = [
-        (aciertos[c] / totales[c], clases[c]) for c in range(len(clases)) if totales[c]
+        (aciertos[c] / totales[c], clases[c])
+        for c in range(len(clases)) if totales[c] and c != fuera
     ]
+    if ajenas_total:
+        print(f"Consultas fuera de alcance reconocidas como tales: "
+              f"{ajenas_derivadas}/{ajenas_total} (el resto depende del umbral "
+              "y la cobertura; ver calibrar.py)")
     return exactitudes, sorted(por_intencion), huerfanos
 
 
 def main():
     datos = cargar_catalogo()
-    clases, ejemplos = asignar_pliegues(datos)
-    print(f"Intenciones: {len(clases)}   Patrones: {len(ejemplos)}")
+    ajenas = cargar_fuera_de_alcance()
+    clases, ejemplos = asignar_pliegues(datos, ajenas)
+    print(f"Intenciones: {len(clases) - (1 if ajenas else 0)}   "
+          f"Patrones: {len(ejemplos) - len(ajenas)}   Fuera de alcance: {len(ajenas)}")
     print(f"Validacion cruzada de {PLIEGUES} pliegues:")
 
     exactitudes, por_intencion, huerfanos = validacion_cruzada(clases, ejemplos)

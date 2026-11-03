@@ -6,9 +6,18 @@
  * tocar la logica.
  */
 
-// Por debajo de este valor el asistente NO responde: deriva al menu.
+// Por debajo de estos valores el asistente NO responde: deriva al menu.
 // Para una institucion publica, informar mal es peor que no responder.
-const UMBRAL_CONFIANZA = 0.75;
+// Valores elegidos con entrenamiento/calibrar.py; pendientes de acordar con el
+// supervisor.
+//
+// UMBRAL_CONFIANZA: probabilidad minima de la intencion elegida.
+// COBERTURA_MINIMA: fraccion minima de los terminos de la consulta que el
+// modelo conoce. Con bolsa de palabras, una consulta ajena que comparte un
+// solo termino con el catalogo ("quien gano el partido") puede recibir
+// confianza alta; exigir cobertura la descarta.
+const UMBRAL_CONFIANZA = 0.9;
+const COBERTURA_MINIMA = 0.6;
 
 const Motor = (() => {
   let catalogo = null;      // categorias e intenciones con sus respuestas
@@ -16,6 +25,7 @@ const Motor = (() => {
   let clases = null;        // orden fijado en el entrenamiento
   let modelo = null;        // puede quedar en null: el menu sigue funcionando
   let porId = new Map();
+  let conocidos = new Set(); // terminos del vocabulario, para la cobertura
 
   // "no-cache" obliga a revalidar con el servidor: una respuesta corregida no
   // debe tardar dias en verse porque el navegador guardo la version vieja.
@@ -38,6 +48,7 @@ const Motor = (() => {
     ]);
 
     porId = new Map(catalogo.intenciones.map((i) => [i.id, i]));
+    conocidos = new Set(vocabulario);
     return { menuListo: true };
   }
 
@@ -78,8 +89,10 @@ const Motor = (() => {
   /* Clasifica una consulta escrita libremente.
    * Devuelve { estado, intencion, confianza }:
    *   estado "respuesta"     -> la confianza supera el umbral
-   *   estado "sin_confianza" -> no alcanza el umbral, o la candidata ya no
-   *                             existe en el catalogo (intencion null)
+   *   estado "sin_confianza" -> no alcanza el umbral o la cobertura minima,
+   *                             o la candidata no esta en el catalogo: una
+   *                             intencion retirada o la clase
+   *                             "fuera-de-alcance" (intencion null)
    *   estado "sin_modelo"    -> el modelo no esta disponible
    *   estado "sin_terminos"  -> la consulta no contiene ningun termino conocido
    */
@@ -89,6 +102,12 @@ const Motor = (() => {
     const vector = bolsaDePalabras(texto, vocabulario);
     if (vector.every((v) => v === 0)) {
       return { estado: "sin_terminos" };
+    }
+
+    const tokens = normalizar(texto);
+    const cobertura = tokens.filter((t) => conocidos.has(t)).length / tokens.length;
+    if (cobertura < COBERTURA_MINIMA) {
+      return { estado: "sin_confianza", intencion: null, confianza: 0, cobertura };
     }
 
     // tf.tidy libera los tensores intermedios; sin esto la memoria crece
@@ -155,5 +174,6 @@ const Motor = (() => {
     preguntas,
     porIdIntencion,
     UMBRAL_CONFIANZA,
+    COBERTURA_MINIMA,
   };
 })();

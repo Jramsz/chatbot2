@@ -121,3 +121,27 @@ test("los archivos de datos y el modelo se piden con revalidacion", async () => 
   for (const opciones of llamadas.fetch) assert.equal(opciones.cache, "no-cache");
   assert.equal(llamadas.modelo[0].requestInit.cache, "no-cache");
 });
+
+test("con poca cobertura de vocabulario no responde aunque la confianza sea alta", async () => {
+  // "nota partido ayer futbol": solo "nota" esta en el vocabulario (1 de 4).
+  const motor = await cargarMotor({ probabilidades: [0.99, 0.01] });
+  const r = motor.clasificar("nota partido ayer futbol");
+  assert.equal(r.estado, "sin_confianza");
+  assert.equal(r.intencion, null);
+});
+
+test("con cobertura suficiente responde aunque haya palabras desconocidas", async () => {
+  // "nota boleta partido": 2 de 3 terminos conocidos, sobre la cobertura minima.
+  const motor = await cargarMotor({ probabilidades: [0.99, 0.01] });
+  assert.equal(motor.clasificar("nota boleta partido").estado, "respuesta");
+});
+
+test("la clase fuera-de-alcance deriva al menu", async () => {
+  const motor = await cargarMotor({
+    clases: ["vigente", "fuera-de-alcance"],
+    probabilidades: [0.01, 0.99],
+  });
+  const r = motor.clasificar("nota boleta");
+  assert.equal(r.estado, "sin_confianza");
+  assert.equal(r.intencion, null);
+});

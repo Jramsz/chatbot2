@@ -49,6 +49,10 @@ def validar(datos):
         if veces > 1:
             errores.append(f"Identificador duplicado: '{id_}' aparece {veces} veces.")
 
+    # Debe coincidir con CLASE_FUERA de catalogo.py.
+    if any(i.get("id") == "fuera-de-alcance" for i in intenciones):
+        errores.append("El id 'fuera-de-alcance' esta reservado para el modelo.")
+
     if not any(esta_activa(i) for i in intenciones):
         errores.append("Todas las intenciones estan retiradas (activa: false).")
 

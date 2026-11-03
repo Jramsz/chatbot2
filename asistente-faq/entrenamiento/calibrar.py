@@ -15,18 +15,17 @@ consulta como "quien gano el partido de ayer" comparte un solo termino
 con bolsa de palabras ese unico termino decide todo.
 
 Uso:
-    python entrenamiento/calibrar.py                 # modelo actual
-    python entrenamiento/calibrar.py --clase-fuera   # con clase "fuera de alcance"
+    python entrenamiento/calibrar.py                     # como entrenar.py
+    python entrenamiento/calibrar.py --sin-clase-fuera   # para comparar
 
 No escribe ningun archivo. Tarda lo mismo que la validacion cruzada.
 """
 
-import json
 import sys
 
 import numpy as np
 
-from catalogo import RAIZ, cargar_catalogo
+from catalogo import CLASE_FUERA, cargar_catalogo, cargar_fuera_de_alcance
 from entrenar import (
     PLIEGUES,
     SEMILLA,
@@ -36,8 +35,6 @@ from entrenar import (
     vectorizar,
 )
 from preprocesamiento import normalizar
-
-FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
 
 UMBRALES = [0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.99]
 COBERTURAS = [0.0, 0.5, 0.6, 0.75]
@@ -50,49 +47,37 @@ def cobertura(tokens, vocabulario):
     return sum(t in conocidos for t in tokens) / len(tokens)
 
 
-def recolectar(clases, ejemplos, consultas_fuera, clase_fuera):
+def recolectar(clases, ejemplos, ajenas_aparte):
     """Predicciones fuera de pliegue: (confianza, acierto, cobertura) para el
     catalogo y (confianza, cobertura) para las consultas ajenas.
 
-    Con clase_fuera, las consultas ajenas de los otros pliegues se agregan al
-    entrenamiento como una clase mas; predecir esa clase equivale a derivar al
-    menu. Cada consulta ajena se evalua solo con el modelo que no la vio.
+    Si el modelo tiene la clase de fuera de alcance, las consultas ajenas ya
+    estan en `ejemplos` y cada una se evalua con el modelo que no la vio;
+    predecir esa clase equivale a derivar al menu. Si no (`ajenas_aparte`),
+    se evaluan contra todos los modelos sin haber entrenado con ellas.
     """
     dentro, fuera = [], []
-    n_clases = len(clases) + (1 if clase_fuera else 0)
-    FUERA = len(clases)
-    ajenas = [(normalizar(q), FUERA, n % PLIEGUES) for n, q in enumerate(consultas_fuera)]
+    FUERA = clases.index(CLASE_FUERA) if CLASE_FUERA in clases else -1
 
     for k in range(PLIEGUES):
         entrenamiento = [e for e in ejemplos if e[2] != k]
-        if clase_fuera:
-            entrenamiento += [e for e in ajenas if e[2] != k]
-            evaluar_ajenas = [e for e in ajenas if e[2] == k]
-        else:
-            evaluar_ajenas = ajenas
         prueba = [e for e in ejemplos if e[2] == k]
+        prueba += [(normalizar(q), FUERA, k) for q in ajenas_aparte]
         vocabulario = construir_vocabulario(entrenamiento)
-        X, y = vectorizar(entrenamiento, vocabulario, n_clases)
+        X, y = vectorizar(entrenamiento, vocabulario, len(clases))
         modelo = entrenar_modelo(X, y, SEMILLA + k)
 
-        X_pru, _ = vectorizar(prueba, vocabulario, n_clases)
+        X_pru = vectorizar([(t, 0, 0) for t, _, _ in prueba], vocabulario, len(clases))[0]
         prob = modelo.predict(X_pru, verbose=0)
         for fila, (tokens, clase, _) in enumerate(prueba):
             pred = int(np.argmax(prob[fila]))
-            if X_pru[fila].sum() == 0 or (clase_fuera and pred == FUERA):
-                dentro.append((0.0, False, 0.0))   # va al menu
-                continue
-            dentro.append((float(prob[fila][pred]), pred == clase,
-                           cobertura(tokens, vocabulario)))
-
-        X_f, _ = vectorizar(evaluar_ajenas, vocabulario, n_clases)
-        prob_f = modelo.predict(X_f, verbose=0)
-        for fila, (tokens, _, _) in enumerate(evaluar_ajenas):
-            pred = int(np.argmax(prob_f[fila]))
-            if X_f[fila].sum() == 0 or (clase_fuera and pred == FUERA):
-                fuera.append((0.0, 0.0))
-                continue
-            fuera.append((float(prob_f[fila][pred]), cobertura(tokens, vocabulario)))
+            derivada = X_pru[fila].sum() == 0 or pred == FUERA
+            conf = 0.0 if derivada else float(prob[fila][pred])
+            cob = 0.0 if derivada else cobertura(tokens, vocabulario)
+            if clase == FUERA:
+                fuera.append((conf, cob))
+            else:
+                dentro.append((conf, pred == clase, cob))
         print(f"  pliegue {k + 1}/{PLIEGUES} listo")
 
     return dentro, fuera
@@ -116,13 +101,18 @@ def tabla(dentro, fuera):
 
 def main():
     datos = cargar_catalogo()
-    consultas = json.loads(FUERA_DE_ALCANCE.read_text(encoding="utf-8"))["consultas"]
-    clase_fuera = "--clase-fuera" in sys.argv
-    clases, ejemplos = asignar_pliegues(datos)
-    print(f"Catalogo: {len(ejemplos)} patrones. Fuera de alcance: {len(consultas)} "
-          "consultas. " + ("Entrenando con clase de fuera de alcance."
-                           if clase_fuera else "Sin clase de fuera de alcance."))
-    dentro, fuera = recolectar(clases, ejemplos, consultas, clase_fuera)
+    consultas = cargar_fuera_de_alcance()
+    sin_clase = "--sin-clase-fuera" in sys.argv
+    if sin_clase:
+        clases, ejemplos = asignar_pliegues(datos)
+        ajenas_aparte = consultas
+    else:
+        clases, ejemplos = asignar_pliegues(datos, consultas)
+        ajenas_aparte = []
+    print(f"Fuera de alcance: {len(consultas)} consultas. " + (
+        "Modelo SIN clase de fuera de alcance (comparacion)." if sin_clase
+        else "Modelo con clase de fuera de alcance (como entrenar.py)."))
+    dentro, fuera = recolectar(clases, ejemplos, ajenas_aparte)
     tabla(dentro, fuera)
     return 0
 

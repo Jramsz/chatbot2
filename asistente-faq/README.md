@@ -165,9 +165,11 @@ confianza suficiente, el asistente sigue siendo plenamente funcional mediante
 navegación por categorías. El modelo es una vía de acceso adicional, no un
 requisito de funcionamiento.
 
-**Umbral de confianza explícito.** Definido en `motor.js`. Por debajo de él el
-asistente no responde: deriva al menú. Para una institución pública, entregar
-información incorrecta es más perjudicial que no responder.
+**No responder por aproximación.** El asistente solo responde si la confianza
+supera `UMBRAL_CONFIANZA`, si conoce al menos `COBERTURA_MINIMA` de los términos
+de la consulta y si el modelo no la clasifica como «fuera de alcance» (una clase
+entrenada con `contenido/fuera-de-alcance.json`). En cualquier otro caso deriva
+al menú. Los valores se calibran con `entrenamiento/calibrar.py`.
 
 **El orden del vocabulario y de las clases es parte del contrato.** Si
 `vocabulario.json` o `clases.json` cambian sin reentrenar el modelo, las
@@ -191,7 +193,8 @@ subdirectorio sin modificaciones.
 ## Pendientes
 
 - [ ] Definir titularidad y licencia con el supervisor
-- [ ] Acordar `EXACTITUD_MINIMA` y `UMBRAL_CONFIANZA` con el supervisor
+- [ ] Acordar `EXACTITUD_MINIMA`, `UMBRAL_CONFIANZA` y `COBERTURA_MINIMA` con el
+      supervisor (ver la tabla de `python entrenamiento/calibrar.py`)
 - [ ] Obtener el catálogo del MINEDUCYT ordenado por frecuencia de consulta
 - [ ] Automatizar validación, entrenamiento y conversión en el flujo de publicación
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados
