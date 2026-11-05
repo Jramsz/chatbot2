@@ -21,6 +21,7 @@ import sys
 
 from validar import esta_activa
 from catalogo import (
+    CLASE_FUERA,
     CATALOGO,
     SALIDA_WEB,
     cargar_catalogo,
@@ -72,7 +73,7 @@ def avisos_de_modelo(datos, clases_entrenadas):
     con_patrones = {i["id"] for i in activas if i.get("patrones")}
     avisos = []
     for c in clases_entrenadas:
-        if c not in ids:
+        if c not in ids and c != CLASE_FUERA:
             avisos.append(
                 f"El modelo aun conoce '{c}', que ya no esta en el catalogo: "
                 "si alguien la escribe, el asistente lo deriva al menu hasta "

@@ -88,8 +88,19 @@ no responde.
 
 ### 5. Umbral de confianza: no responder por aproximación
 
-Definido en `motor.js` (`UMBRAL_CONFIANZA`). Por debajo de él se deriva al
-menú, nunca se entrega la intención más probable.
+Tres defensas, todas en el camino de la consulta escrita:
+
+- `UMBRAL_CONFIANZA` (`motor.js`): probabilidad mínima de la intención elegida.
+- `COBERTURA_MINIMA` (`motor.js`): fracción mínima de los términos de la
+  consulta que el modelo conoce. Con bolsa de palabras, una consulta ajena que
+  comparte una sola palabra con el catálogo puede recibir confianza alta.
+- Clase `fuera-de-alcance`: el modelo se entrena también con
+  `contenido/fuera-de-alcance.json`. Esa clase no está en el catálogo, así que
+  el navegador deriva al menú (id reservado).
+
+Por debajo de cualquiera se deriva al menú, nunca se entrega la intención más
+probable. Los valores se eligen con `entrenamiento/calibrar.py`, que mide cuántas
+consultas ajenas reciben respuesta; no cambiarlos sin volver a medir.
 
 Para una institución pública, informar mal es peor que no responder.
 
@@ -147,6 +158,7 @@ python entrenamiento/validar.py                 # valida el catálogo
 python entrenamiento/verificar_equivalencia.py  # Python contra JS (requiere Node)
 python entrenamiento/entrenar.py                # entrena, evalúa y exporta
 python entrenamiento/actualizar_catalogo.py    # solo catálogo, sin reentrenar
+python entrenamiento/calibrar.py                # mide umbral y cobertura
 pnpm test                                       # pruebas del motor (solo Node)
 python -m unittest discover -s pruebas -p "test_*.py"   # pruebas de Python
 
@@ -167,6 +179,7 @@ que el navegador cargue el modelo y los datos.
 
 ```
 contenido/intenciones.json      Catálogo. Único archivo que edita el ministerio.
+contenido/fuera-de-alcance.json Consultas que NO deben responderse (lo mantiene el equipo).
 entrenamiento/                  Python: preprocesamiento, validación, entrenamiento.
 web/                            Widget: interfaz, motor, preprocesamiento gemelo.
 web/lib/                        TensorFlow.js local, copiado desde pnpm (pnpm run libs).
@@ -214,7 +227,8 @@ README.md                       Presentación y pasos de uso.
 - [ ] Titularidad y licencia: confirmar con el supervisor y con el reglamento
       de propiedad intelectual de la universidad. Hasta entonces, repositorio
       sin licencia pública
-- [ ] Acordar `EXACTITUD_MINIMA` y `UMBRAL_CONFIANZA` con el supervisor
+- [ ] Acordar `EXACTITUD_MINIMA`, `UMBRAL_CONFIANZA` (0.9) y `COBERTURA_MINIMA`
+      (0.6) con el supervisor, mostrando la tabla de `calibrar.py`
 - [ ] Automatizar validación, verificación, entrenamiento y conversión en el
       flujo de publicación
 - [ ] Si se actualiza `web/lib/tf.min.js`, reconvertir y probar el modelo con

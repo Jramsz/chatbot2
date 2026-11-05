@@ -15,6 +15,12 @@ from validar import esta_activa, validar
 RAIZ = Path(__file__).resolve().parent.parent
 CATALOGO = RAIZ / "contenido" / "intenciones.json"
 SALIDA_WEB = RAIZ / "web" / "datos"
+FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
+
+# Clase extra del modelo para las consultas ajenas al catalogo. No es una
+# intencion: no esta en catalogo.json, asi que el navegador la trata como
+# "sin confianza" y deriva al menu. Su id esta reservado.
+CLASE_FUERA = "fuera-de-alcance"
 
 
 def cargar_catalogo(ruta=CATALOGO):
@@ -29,6 +35,14 @@ def cargar_catalogo(ruta=CATALOGO):
             print(f"  - {e}")
         sys.exit(1)
     return datos
+
+
+def cargar_fuera_de_alcance(ruta=FUERA_DE_ALCANCE):
+    """Consultas que el asistente no debe responder. Lista vacia si no hay archivo."""
+    ruta = Path(ruta)
+    if not ruta.exists():
+        return []
+    return json.loads(ruta.read_text(encoding="utf-8")).get("consultas", [])
 
 
 def catalogo_para_web(datos):
