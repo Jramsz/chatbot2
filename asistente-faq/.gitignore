@@ -6,3 +6,4 @@ __pycache__/
 .venv/
 .venv-conversion/
 node_modules/
+entrega/

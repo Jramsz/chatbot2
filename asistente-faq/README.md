@@ -187,10 +187,28 @@ junto con el modelo, nunca por separado.
 
 ## Despliegue
 
-El entregable son archivos estáticos: la carpeta `web/` completa, con `datos/`
-y `modelo/` ya generados. Puede publicarse en cualquier servicio de páginas
-estáticas o en el servidor web de la institución, y embeberse en el sitio
-mediante inserción por URL.
+Un solo comando arma el entregable: valida, verifica la equivalencia, entrena
+(con sus condiciones), convierte el modelo y comprueba que modelo, vocabulario y
+clases coinciden.
+
+```bash
+python entrenamiento/publicar.py                 # todo
+python entrenamiento/publicar.py --sin-entrenar  # reusa el modelo ya generado
+```
+
+Resultado en `entrega/`: `asistente/` es el widget que se entrega (archivos
+estáticos) e `index.html` es una página de demostración con el widget
+embebido. Para insertarlo en un sitio basta una línea (ver
+`docs/integracion.md`):
+
+```html
+<script src="https://<donde-este-alojado>/asistente/insertar.js" defer></script>
+```
+
+**Publicación automática.** Cada cambio en `asistente-faq/` que llega a `main`
+ejecuta `.github/workflows/publicar.yml`: pruebas, `publicar.py` y despliegue
+en GitHub Pages. Si algo falla, no se publica y sigue la versión anterior.
+Requisito: en GitHub, Settings > Pages > Source = «GitHub Actions».
 
 No se usan rutas absolutas: el asistente funciona en cualquier dominio o
 subdirectorio sin modificaciones.
@@ -204,5 +222,5 @@ subdirectorio sin modificaciones.
       `COBERTURA_MINIMA` con el supervisor (ver la tabla de
       `python entrenamiento/calibrar.py`) y volver a medirlos con el contenido real
 - [ ] Obtener el catálogo del MINEDUCYT ordenado por frecuencia de consulta
-- [ ] Automatizar validación, entrenamiento y conversión en el flujo de publicación
+- [x] Automatizar validación, entrenamiento y conversión (`publicar.py` y GitHub Actions)
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados

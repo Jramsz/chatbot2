@@ -147,6 +147,13 @@ body {
 
 #enviar:hover { background: #2a4a80; }
 
+.embebido .asistente {
+  height: 100vh;
+  max-width: none;
+  border: none;
+  border-radius: 0;
+}
+
 @media (max-width: 520px) {
   .asistente {
     height: 100vh;

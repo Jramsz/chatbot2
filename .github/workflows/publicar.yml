@@ -1,0 +1,77 @@
+# Prueba, entrena, convierte y publica el asistente en GitHub Pages.
+#
+# Se ejecuta con cada cambio en asistente-faq/ que llega a main, y a mano
+# desde la pestaña Actions. Si una prueba falla o el modelo no cumple las
+# condiciones de entrenar.py, no se publica nada y sigue la version anterior.
+#
+# Requisito unico: Settings > Pages > Source = "GitHub Actions".
+
+name: Publicar asistente
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "asistente-faq/**"
+      - ".github/workflows/publicar.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: asistente-faq
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias de entrenamiento
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -q -r requirements.txt
+
+      # Entorno aparte: tensorflowjs trae su propio TensorFlow (ver requirements.txt).
+      - name: Instalar el conversor a TensorFlow.js
+        run: |
+          python -m venv .venv-conversion
+          .venv-conversion/bin/pip install -q tensorflowjs==4.22.0 ydf==0.13.0
+
+      - name: Pruebas
+        run: |
+          node --test
+          .venv/bin/python -m unittest discover -s pruebas -p "test_*.py"
+
+      - name: Validar, entrenar, convertir y armar el entregable
+        run: .venv/bin/python entrenamiento/publicar.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: asistente-faq/entrega
+
+  desplegar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4
