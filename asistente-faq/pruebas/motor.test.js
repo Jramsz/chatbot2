@@ -20,13 +20,19 @@ const CATALOGO = {
 // el catalogo. `probabilidades` es la salida simulada del modelo.
 // `entradasModelo` y `salidasModelo` son las dimensiones del modelo simulado;
 // por defecto coinciden con el vocabulario (2) y las clases.
+// `tfEnPagina`: si es false, TensorFlow.js no esta cargado y el motor debe
+// pedirlo con una etiqueta <script>; `scriptCarga` decide si esa carga funciona.
+// `cargar`: si es false, no se llama a cargarModelo (modelo aun cargando).
 async function cargarMotor({
   probabilidades,
   clases = ["vigente", "otra"],
   modelo = true,
   entradasModelo = 2,
   salidasModelo = clases.length,
-  llamadas = { fetch: [], modelo: [] },
+  llamadas = { fetch: [], modelo: [], scripts: [] },
+  tfEnPagina = true,
+  scriptCarga = true,
+  cargar = true,
 }) {
   const datos = {
     "datos/catalogo.json": CATALOGO,
@@ -47,20 +53,36 @@ async function cargarMotor({
     tensor2d: (x) => x,
   };
   const contexto = {
-    tf,
     console: { ...console, warn() {} },
+    document: {
+      createElement: () => ({}),
+      head: {
+        appendChild: (script) => {
+          (llamadas.scripts ||= []).push(script.src);
+          setTimeout(() => {
+            if (scriptCarga) {
+              contexto.tf = tf;
+              script.onload();
+            } else {
+              script.onerror();
+            }
+          }, 0);
+        },
+      },
+    },
     fetch: async (ruta, opciones) => {
       llamadas.fetch.push(opciones);
       return { ok: true, json: async () => datos[ruta] };
     },
   };
+  if (tfEnPagina) contexto.tf = tf;
   vm.createContext(contexto);
   for (const archivo of ["preprocesamiento.js", "motor.js"]) {
     vm.runInContext(fs.readFileSync(path.join(WEB, archivo), "utf8"), contexto);
   }
   vm.runInContext("this.Motor = Motor;", contexto);
   await contexto.Motor.iniciar();
-  await contexto.Motor.cargarModelo();
+  if (cargar) await contexto.Motor.cargarModelo();
   return contexto.Motor;
 }
 
@@ -144,4 +166,28 @@ test("la clase fuera-de-alcance deriva al menu", async () => {
   const r = motor.clasificar("nota boleta");
   assert.equal(r.estado, "sin_confianza");
   assert.equal(r.intencion, null);
+});
+
+test("TensorFlow.js se pide en segundo plano, despues del menu", async () => {
+  const llamadas = { fetch: [], modelo: [], scripts: [] };
+  const motor = await cargarMotor({ probabilidades: [0.99, 0.01], tfEnPagina: false, llamadas });
+  assert.deepEqual(llamadas.scripts, ["lib/tf.min.js"]);
+  assert.equal(motor.estadoModelo(), "listo");
+  assert.equal(motor.clasificar("nota boleta").estado, "respuesta");
+});
+
+test("mientras el modelo carga, el menu funciona y el estado es cargando", async () => {
+  const motor = await cargarMotor({ probabilidades: [0.99, 0.01], cargar: false });
+  assert.equal(motor.estadoModelo(), "cargando");
+  assert.equal(motor.clasificar("nota boleta").estado, "sin_modelo");
+  assert.equal(motor.categorias().length, 1);
+});
+
+test("si TensorFlow.js no se puede descargar, queda en fallo y el menu sigue", async () => {
+  const motor = await cargarMotor({
+    probabilidades: [0.99, 0.01], tfEnPagina: false, scriptCarga: false,
+  });
+  assert.equal(motor.estadoModelo(), "fallo");
+  assert.equal(motor.clasificar("nota boleta").estado, "sin_modelo");
+  assert.equal(motor.preguntas("c", "s").length, 1);
 });

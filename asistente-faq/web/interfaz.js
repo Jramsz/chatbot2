@@ -16,6 +16,9 @@ const TEXTOS = {
   sinTerminos:
     "No reconocí ninguna palabra de tu consulta. Probemos por categoría:",
   sinModelo: "Elige una categoría para encontrar tu respuesta:",
+  modeloCargando:
+    "Todavía estoy preparando la búsqueda por texto. Mientras tanto, " +
+    "elige una categoría:",
   errorCarga:
     "No se pudo cargar el asistente. Recarga la página o inténtalo más tarde.",
   volver: "← Volver",
@@ -127,6 +130,8 @@ const Interfaz = (() => {
 
     const mensaje =
       r.estado === "sin_terminos" ? TEXTOS.sinTerminos
+      : r.estado === "sin_modelo" && Motor.estadoModelo() === "cargando"
+        ? TEXTOS.modeloCargando
       : r.estado === "sin_modelo" ? TEXTOS.sinModelo
       : TEXTOS.sinConfianza;
 

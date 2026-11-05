@@ -24,6 +24,7 @@ const Motor = (() => {
   let vocabulario = null;   // orden fijado en el entrenamiento
   let clases = null;        // orden fijado en el entrenamiento
   let modelo = null;        // puede quedar en null: el menu sigue funcionando
+  let estado = "cargando";  // del modelo: "cargando" | "listo" | "fallo"
   let porId = new Map();
   let conocidos = new Set(); // terminos del vocabulario, para la cobertura
 
@@ -52,10 +53,28 @@ const Motor = (() => {
     return { menuListo: true };
   }
 
+  /* TensorFlow.js pesa ~1.5 MB, casi todo el asistente. Cargado con una
+   * etiqueta <script> normal, el navegador no muestra nada hasta descargarlo:
+   * ~9.5 s en 3G antes de ver el menu, que no lo necesita. Pedido desde aqui,
+   * el menu aparece en ~1.5 s y TensorFlow.js llega en segundo plano.
+   * Va empaquetado en lib/ (version 4.22.0, Apache 2.0): sin CDN ni dominio
+   * fijo, para que el entregable funcione en cualquier alojamiento. */
+  function cargarTensorflow() {
+    if (typeof tf !== "undefined") return Promise.resolve();
+    return new Promise((listo, fallo) => {
+      const script = document.createElement("script");
+      script.src = "lib/tf.min.js";
+      script.onload = listo;
+      script.onerror = () => fallo(new Error("No se pudo cargar lib/tf.min.js"));
+      document.head.appendChild(script);
+    });
+  }
+
   /* Carga diferida del modelo. Si falla, el asistente sigue operando en modo
    * menu; se registra el fallo pero no se interrumpe el servicio. */
   async function cargarModelo() {
     try {
+      await cargarTensorflow();
       const cargado = await tf.loadLayersModel("modelo/model.json", {
         requestInit: REVALIDAR,
       });
@@ -74,16 +93,22 @@ const Motor = (() => {
       }
 
       modelo = cargado;
+      estado = "listo";
       return true;
     } catch (e) {
       console.warn("El modelo no se pudo cargar; el asistente opera con el menu.", e);
       modelo = null;
+      estado = "fallo";
       return false;
     }
   }
 
   function modeloDisponible() {
     return modelo !== null;
+  }
+
+  function estadoModelo() {
+    return estado;
   }
 
   /* Clasifica una consulta escrita libremente.
@@ -168,6 +193,7 @@ const Motor = (() => {
     iniciar,
     cargarModelo,
     modeloDisponible,
+    estadoModelo,
     clasificar,
     categorias,
     subtemas,
