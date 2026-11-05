@@ -19,6 +19,7 @@ from preprocesamiento import normalizar
 
 RAIZ = Path(__file__).resolve().parent.parent
 CATALOGO = RAIZ / "contenido" / "intenciones.json"
+FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
 
 # Una intencion con patrones necesita al menos este numero para que el modelo
 # la aprenda. Una intencion SIN patrones es valida: queda solo en el menu.
@@ -31,7 +32,7 @@ def esta_activa(intencion):
     return intencion.get("activa", True) is not False
 
 
-def validar(datos):
+def validar(datos, ajenas=()):
     errores = []
     avisos = []
 
@@ -76,6 +77,19 @@ def validar(datos):
                     f"'{ubicacion[clave]}' tras normalizar."
                 )
             ubicacion[clave] = intencion.get("id")
+
+    # Una consulta de fuera-de-alcance.json identica a un patron (tras
+    # normalizar) le ensena al modelo que la misma frase es y no es del
+    # catalogo. Pasa cuando el ministerio agrega una pregunta que antes se
+    # considero ajena: hay que quitarla de fuera-de-alcance.json.
+    for consulta in ajenas:
+        clave = " ".join(normalizar(consulta))
+        if clave and clave in ubicacion:
+            errores.append(
+                f"La consulta fuera de alcance '{consulta}' coincide con un "
+                f"patron de '{ubicacion[clave]}'. Si ahora es una pregunta del "
+                "catalogo, quitela de contenido/fuera-de-alcance.json."
+            )
 
     for intencion in intenciones:
         id_ = intencion.get("id", "(sin id)")
@@ -123,7 +137,10 @@ def main():
         return 1
 
     datos = json.loads(CATALOGO.read_text(encoding="utf-8"))
-    errores, avisos = validar(datos)
+    ajenas = []
+    if FUERA_DE_ALCANCE.exists():
+        ajenas = json.loads(FUERA_DE_ALCANCE.read_text(encoding="utf-8")).get("consultas", [])
+    errores, avisos = validar(datos, ajenas)
 
     n_int = len(datos.get("intenciones", []))
     n_pat = sum(len(i.get("patrones", [])) for i in datos.get("intenciones", []))

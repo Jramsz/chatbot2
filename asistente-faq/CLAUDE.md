@@ -101,6 +101,9 @@ Tres defensas, todas en el camino de la consulta escrita:
 Por debajo de cualquiera se deriva al menú, nunca se entrega la intención más
 probable. Los valores se eligen con `entrenamiento/calibrar.py`, que mide cuántas
 consultas ajenas reciben respuesta; no cambiarlos sin volver a medir.
+`entrenar.py` lee esos valores de `motor.js` (una sola fuente) y no publica si
+las consultas ajenas respondidas superan `AJENAS_MAXIMA`. El validador impide
+que una consulta de `fuera-de-alcance.json` coincida con un patrón del catálogo.
 
 Para una institución pública, informar mal es peor que no responder.
 
@@ -227,8 +230,10 @@ README.md                       Presentación y pasos de uso.
 - [ ] Titularidad y licencia: confirmar con el supervisor y con el reglamento
       de propiedad intelectual de la universidad. Hasta entonces, repositorio
       sin licencia pública
-- [ ] Acordar `EXACTITUD_MINIMA`, `UMBRAL_CONFIANZA` (0.9) y `COBERTURA_MINIMA`
-      (0.6) con el supervisor, mostrando la tabla de `calibrar.py`
+- [ ] Acordar con el supervisor, mostrando la tabla de `calibrar.py`:
+      `EXACTITUD_MINIMA` (0.75, provisional), `AJENAS_MAXIMA` (15 %),
+      `UMBRAL_CONFIANZA` (0.9) y `COBERTURA_MINIMA` (0.6). Volver a medir con
+      el contenido real: la exactitud depende del número de intenciones
 - [ ] Automatizar validación, verificación, entrenamiento y conversión en el
       flujo de publicación
 - [ ] Si se actualiza `web/lib/tf.min.js`, reconvertir y probar el modelo con

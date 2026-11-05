@@ -82,8 +82,15 @@ mostrarla y, si alguien la escribe, el asistente lo deriva al menú.
 La automatización de este flujo está pendiente.
 
 Si el archivo tiene algún error, **no se publica nada** y la versión anterior
-sigue funcionando mientras se corrige. Si el modelo no alcanza la exactitud
-mínima, tampoco se publica.
+sigue funcionando mientras se corrige. Tampoco se publica un modelo que no
+alcanza la exactitud mínima o que respondería demasiadas preguntas ajenas al
+catálogo.
+
+Cada vez que se agregan o cambian patrones, el equipo técnico revisa además el
+resultado de `calibrar.py`, que muestra cuántas preguntas ajenas recibirían
+respuesta. Si se agrega al catálogo una pregunta que antes se consideraba ajena
+(está en `contenido/fuera-de-alcance.json`), el validador lo avisa y hay que
+quitarla de ese archivo.
 
 ## Cómo quitar una pregunta
 

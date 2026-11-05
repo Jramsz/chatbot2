@@ -26,11 +26,13 @@ import sys
 import numpy as np
 
 from catalogo import CLASE_FUERA, cargar_catalogo, cargar_fuera_de_alcance
+from catalogo import leer_umbrales
 from entrenar import (
     PLIEGUES,
     SEMILLA,
     asignar_pliegues,
     construir_vocabulario,
+    cobertura,
     entrenar_modelo,
     vectorizar,
 )
@@ -38,13 +40,6 @@ from preprocesamiento import normalizar
 
 UMBRALES = [0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.99]
 COBERTURAS = [0.0, 0.5, 0.6, 0.75]
-
-
-def cobertura(tokens, vocabulario):
-    if not tokens:
-        return 0.0
-    conocidos = set(vocabulario)
-    return sum(t in conocidos for t in tokens) / len(tokens)
 
 
 def recolectar(clases, ejemplos, ajenas_aparte):
@@ -73,7 +68,7 @@ def recolectar(clases, ejemplos, ajenas_aparte):
             pred = int(np.argmax(prob[fila]))
             derivada = X_pru[fila].sum() == 0 or pred == FUERA
             conf = 0.0 if derivada else float(prob[fila][pred])
-            cob = 0.0 if derivada else cobertura(tokens, vocabulario)
+            cob = 0.0 if derivada else cobertura(tokens, set(vocabulario))
             if clase == FUERA:
                 fuera.append((conf, cob))
             else:
@@ -114,6 +109,8 @@ def main():
         else "Modelo con clase de fuera de alcance (como entrenar.py)."))
     dentro, fuera = recolectar(clases, ejemplos, ajenas_aparte)
     tabla(dentro, fuera)
+    umbral, minima = leer_umbrales()
+    print(f"\nValores actuales en web/motor.js: umbral {umbral}, cobertura {minima}.")
     return 0
 
 
