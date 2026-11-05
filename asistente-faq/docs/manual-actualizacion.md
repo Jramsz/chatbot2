@@ -32,7 +32,7 @@ formas de preguntarlas y las respuestas oficiales.
 | `id` | Identificador único. **No cambiarlo nunca** una vez publicado. |
 | `categoria` | Debe coincidir con una de las categorías declaradas arriba en el archivo. |
 | `subtema` | Agrupación dentro de la categoría. |
-| `prioridad` | Qué tan frecuente es la consulta: 1 es lo más preguntado. Determina qué entra antes al entrenamiento. |
+| `prioridad` | Orden dentro del menú: 1 aparece primero. Use 1 para lo más consultado. |
 | `pregunta` | Cómo se muestra la pregunta en el menú. |
 | `patrones` | Formas en que un estudiante podría escribir la consulta. Mínimo cuatro, o ninguno (ver más abajo). Entre uno y tres no es válido. |
 | `respuesta` | El texto oficial. Debe entenderse por sí solo. |

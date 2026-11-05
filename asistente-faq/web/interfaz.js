@@ -96,13 +96,19 @@ const Interfaz = (() => {
   }
 
   function mostrarPreguntas(idCategoria, subtema) {
+    // Si la categoria tiene un solo subtema, ese nivel se salto al entrar:
+    // volver a el reabriria esta misma lista y el usuario quedaria atrapado.
+    const volver = Motor.subtemas(idCategoria).length === 1
+      ? () => mostrarCategorias()
+      : () => mostrarSubtemas(idCategoria);
+
     burbuja(TEXTOS.elegirPregunta, "bot");
     opciones([
       ...Motor.preguntas(idCategoria, subtema).map((i) => ({
         etiqueta: i.pregunta,
         accion: () => responder(i),
       })),
-      { etiqueta: TEXTOS.volver, accion: () => mostrarSubtemas(idCategoria) },
+      { etiqueta: TEXTOS.volver, accion: volver },
     ]);
   }
 

@@ -25,6 +25,9 @@ ACEPTACION = RAIZ / "contenido" / "consultas-de-aceptacion.json"
 # "sin confianza" y deriva al menu. Su id esta reservado.
 CLASE_FUERA = "fuera-de-alcance"
 
+# Las intenciones sin prioridad van al final de su subtema.
+PRIORIDAD_POR_DEFECTO = 99
+
 
 def leer_umbrales(ruta=MOTOR_JS):
     """UMBRAL_CONFIANZA y COBERTURA_MINIMA tal como los usa el navegador.
@@ -79,7 +82,13 @@ def catalogo_para_web(datos):
     categorias que quedan sin ninguna intencion activa: un menu con una
     categoria vacia deja al estudiante sin salida.
     """
-    activas = [i for i in datos["intenciones"] if esta_activa(i)]
+    # Orden del menu: por prioridad (1 = lo mas consultado), y a igual
+    # prioridad, el del archivo. El navegador muestra subtemas y preguntas en
+    # este orden. No afecta al modelo: las clases salen de intenciones.json.
+    activas = sorted(
+        (i for i in datos["intenciones"] if esta_activa(i)),
+        key=lambda i: i.get("prioridad", PRIORIDAD_POR_DEFECTO),
+    )
     usadas = {i["categoria"] for i in activas}
     return {
         "version": datos.get("version"),
