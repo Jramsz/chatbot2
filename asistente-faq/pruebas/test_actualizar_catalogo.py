@@ -151,5 +151,18 @@ class Validacion(unittest.TestCase):
         self.assertTrue(any("'respuesta'" in e for e in errores))
 
 
+class OrdenDelMenu(unittest.TestCase):
+    def test_las_preguntas_se_ordenan_por_prioridad(self):
+        web = catalogo.catalogo_para_web(datos(
+            intencion("c", prioridad=3), intencion("a", prioridad=1),
+            intencion("sin"), intencion("b", prioridad=2)))
+        self.assertEqual([i["id"] for i in web["intenciones"]], ["a", "b", "c", "sin"])
+
+    def test_prioridad_invalida_es_error(self):
+        for mala in (0, -1, "1", 1.5, True):
+            errores, _ = validar(datos(intencion("a", prioridad=mala)))
+            self.assertTrue(any("'prioridad'" in e for e in errores), mala)
+
+
 if __name__ == "__main__":
     unittest.main()

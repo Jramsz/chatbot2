@@ -2,16 +2,16 @@
   "version": "2026-1",
   "actualizado": "2026-11-05",
   "categorias": [
-    { "id": "entrega-notas", "nombre": "Entrega de notas" },
-    { "id": "tramites", "nombre": "Trámites académicos" },
-    { "id": "utiles", "nombre": "Útiles escolares" },
+    { "id": "entrega-notas", "nombre": "Notas" },
+    { "id": "tramites", "nombre": "Trámites y documentos" },
+    { "id": "utiles", "nombre": "Útiles y alimentación" },
     { "id": "otras", "nombre": "Otras consultas" }
   ],
   "intenciones": [
     {
       "id": "notas-fecha-entrega",
       "categoria": "entrega-notas",
-      "subtema": "Entrega y consulta de notas",
+      "subtema": "Notas",
       "prioridad": 1,
       "pregunta": "¿Cuándo y cómo puedo ver mis notas?",
       "patrones": [
@@ -49,13 +49,13 @@
         "ya entregan las boletas este mes",
         "en qué semana dan las boletas de notas"
       ],
-      "respuesta": "Las notas se entregan durante la semana posterior al cierre de cada período de evaluación; la dirección de su centro educativo comunica la fecha y el horario. Para consultarlas en otro momento, pregunte a su docente guía o en la secretaría del centro. Si el centro usa una plataforma en línea, la dirección le indicará cómo acceder.",
+      "respuesta": "Las notas se entregan al cierre de cada período de evaluación; la dirección de su centro educativo comunica la fecha y el horario. Para consultarlas en otro momento, pregunte a su docente guía o en la secretaría del centro. Si el centro usa una plataforma en línea, la dirección le indicará cómo acceder.",
       "vigencia": "permanente"
     },
     {
       "id": "notas-boleta-extravio",
       "categoria": "entrega-notas",
-      "subtema": "Boletas",
+      "subtema": "Notas",
       "prioridad": 2,
       "pregunta": "¿Qué hago si perdí la boleta de notas?",
       "patrones": [
@@ -80,13 +80,13 @@
         "dónde solicito otra copia de mis notas",
         "cómo repongo una libreta de notas extraviada"
       ],
-      "respuesta": "Debe solicitar la reposición en la secretaría de su centro educativo, presentando su documento de identidad o el de su responsable. La reposición no tiene costo y se entrega en un plazo aproximado de cinco días hábiles.",
+      "respuesta": "Solicite la reposición en la secretaría de su centro educativo, presentando su documento de identidad o el de su responsable. La secretaría le indicará si el trámite tiene costo y en cuánto tiempo se entrega.",
       "vigencia": "permanente"
     },
     {
       "id": "tramites-constancia",
       "categoria": "tramites",
-      "subtema": "Constancias",
+      "subtema": "Documentos",
       "prioridad": 1,
       "pregunta": "¿Cómo solicito una constancia de estudios?",
       "patrones": [
@@ -111,14 +111,14 @@
         "puedo pedir la constancia por otra persona",
         "necesito un papel que compruebe que soy alumno"
       ],
-      "respuesta": "Presente en la secretaría de su centro educativo su documento de identidad o el de su responsable, e indique el año y grado cursado. El trámite no tiene costo y la entrega se realiza en un plazo aproximado de cinco días hábiles.",
+      "respuesta": "Solicítela en la secretaría de su centro educativo presentando su documento de identidad o el de su responsable, e indique el año y grado cursado. La secretaría le indicará si el trámite tiene costo y en cuánto tiempo se entrega.",
       "vigencia": "permanente"
     },
     {
       "id": "tramites-traslado",
       "categoria": "tramites",
-      "subtema": "Traslados",
-      "prioridad": 3,
+      "subtema": "Inscripción y traslados",
+      "prioridad": 2,
       "pregunta": "¿Cómo traslado mi expediente a otro centro escolar?",
       "patrones": [
         "cómo traslado mi expediente",
@@ -148,7 +148,7 @@
     {
       "id": "utiles-entrega",
       "categoria": "utiles",
-      "subtema": "Paquete escolar",
+      "subtema": "Útiles y alimentación",
       "prioridad": 1,
       "pregunta": "¿Dónde retiro el paquete de útiles escolares?",
       "patrones": [
@@ -173,13 +173,13 @@
         "por qué mi hijo no recibió cuadernos ni uniforme",
         "dónde retiro el paquete que da el gobierno"
       ],
-      "respuesta": "La entrega del paquete escolar se realiza en el centro educativo donde el estudiante está matriculado. La dirección informa la fecha y horario de distribución. El estudiante debe presentarse acompañado de su padre, madre o responsable.",
+      "respuesta": "El paquete escolar se entrega en el centro educativo donde el estudiante está matriculado. La dirección informa la fecha, el horario y quién puede retirarlo.",
       "vigencia": "permanente"
     },
     {
       "id": "matricula-fechas",
       "categoria": "tramites",
-      "subtema": "Matrícula",
+      "subtema": "Inscripción y traslados",
       "prioridad": 1,
       "pregunta": "¿Cuándo es el período de matrícula?",
       "patrones": [
@@ -210,8 +210,8 @@
     {
       "id": "otras-contacto",
       "categoria": "otras",
-      "subtema": "Contacto",
-      "prioridad": 2,
+      "subtema": "Apoyo y contacto",
+      "prioridad": 3,
       "pregunta": "¿Cómo contacto al ministerio?",
       "patrones": [
         "cómo contacto al ministerio",
@@ -240,7 +240,7 @@
     },
     {
       "id": "otras-carnet",
-      "categoria": "otras",
+      "categoria": "tramites",
       "subtema": "Documentos",
       "prioridad": 3,
       "pregunta": "¿Qué hago si perdí mi carné de estudiante?",
@@ -272,8 +272,8 @@
     {
       "id": "notas-reclamo",
       "categoria": "entrega-notas",
-      "subtema": "Reclamos",
-      "prioridad": 3,
+      "subtema": "Notas",
+      "prioridad": 4,
       "pregunta": "¿Qué hago si no estoy de acuerdo con una nota?",
       "patrones": [
         "no estoy de acuerdo con mi nota",
@@ -303,8 +303,8 @@
     {
       "id": "notas-promedio",
       "categoria": "entrega-notas",
-      "subtema": "Evaluación",
-      "prioridad": 4,
+      "subtema": "Notas",
+      "prioridad": 3,
       "pregunta": "¿Cómo se calcula el promedio y cuál es la nota mínima para aprobar?",
       "patrones": [
         "cómo se calcula el promedio final",
@@ -334,7 +334,7 @@
     {
       "id": "tramites-certificado",
       "categoria": "tramites",
-      "subtema": "Certificados",
+      "subtema": "Documentos",
       "prioridad": 2,
       "pregunta": "¿Cómo obtengo el certificado de estudios de un grado cursado?",
       "patrones": [
@@ -365,7 +365,7 @@
     {
       "id": "tramites-retiro",
       "categoria": "tramites",
-      "subtema": "Retiros",
+      "subtema": "Inscripción y traslados",
       "prioridad": 4,
       "pregunta": "¿Cómo retiro a un estudiante del centro educativo?",
       "patrones": [
@@ -396,8 +396,8 @@
     {
       "id": "tramites-correccion-datos",
       "categoria": "tramites",
-      "subtema": "Datos personales",
-      "prioridad": 5,
+      "subtema": "Documentos",
+      "prioridad": 4,
       "pregunta": "¿Cómo corrijo un error en mi nombre o datos del expediente?",
       "patrones": [
         "cómo corrijo mi nombre en el expediente",
@@ -427,8 +427,8 @@
     {
       "id": "tramites-reprobado",
       "categoria": "tramites",
-      "subtema": "Repetición de grado",
-      "prioridad": 6,
+      "subtema": "Inscripción y traslados",
+      "prioridad": 3,
       "pregunta": "¿Qué ocurre si repruebo un grado?",
       "patrones": [
         "qué pasa si repruebo el año",
@@ -458,7 +458,7 @@
     {
       "id": "utiles-lista",
       "categoria": "utiles",
-      "subtema": "Lista de útiles",
+      "subtema": "Útiles y alimentación",
       "prioridad": 2,
       "pregunta": "¿Qué útiles escolares debo comprar?",
       "patrones": [
@@ -483,14 +483,14 @@
         "qué debo comprar además del paquete",
         "qué materiales necesito para empezar clases"
       ],
-      "respuesta": "La lista de materiales depende del grado y la publica el centro educativo. Consulte en la dirección o con el docente guía; el paquete escolar entregado por el ministerio cubre parte de los útiles básicos.",
+      "respuesta": "La lista de materiales depende del grado y la publica el centro educativo. Consulte en la dirección o con el docente guía; si su centro recibe paquete escolar, la dirección le informará qué incluye.",
       "vigencia": "permanente"
     },
     {
       "id": "utiles-alimentacion",
       "categoria": "utiles",
-      "subtema": "Alimentación escolar",
-      "prioridad": 4,
+      "subtema": "Útiles y alimentación",
+      "prioridad": 3,
       "pregunta": "¿Cómo funciona la alimentación escolar?",
       "patrones": [
         "cómo funciona el refrigerio escolar",
@@ -520,8 +520,8 @@
     {
       "id": "otras-calendario",
       "categoria": "otras",
-      "subtema": "Calendario escolar",
-      "prioridad": 3,
+      "subtema": "Calendario y pruebas",
+      "prioridad": 1,
       "pregunta": "¿Cuándo son las vacaciones y los días sin clases?",
       "patrones": [
         "cuándo son las vacaciones escolares",
@@ -551,8 +551,8 @@
     {
       "id": "otras-becas",
       "categoria": "otras",
-      "subtema": "Becas",
-      "prioridad": 4,
+      "subtema": "Apoyo y contacto",
+      "prioridad": 1,
       "pregunta": "¿Existen becas para estudiantes y cómo se solicitan?",
       "patrones": [
         "cómo solicito una beca",
@@ -582,8 +582,8 @@
     {
       "id": "otras-denuncia",
       "categoria": "otras",
-      "subtema": "Denuncias",
-      "prioridad": 5,
+      "subtema": "Apoyo y contacto",
+      "prioridad": 2,
       "pregunta": "¿Qué hago si un estudiante sufre acoso o maltrato en la escuela?",
       "patrones": [
         "qué hago si molestan a mi hijo en la escuela",
@@ -618,8 +618,8 @@
     {
       "id": "otras-pruebas-nacionales",
       "categoria": "otras",
-      "subtema": "Pruebas nacionales",
-      "prioridad": 6,
+      "subtema": "Calendario y pruebas",
+      "prioridad": 2,
       "pregunta": "¿Qué son las pruebas nacionales y cuándo se realizan?",
       "patrones": [
         "qué son las pruebas nacionales",

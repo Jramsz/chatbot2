@@ -98,6 +98,10 @@ def validar(datos, ajenas=()):
             if not str(intencion.get(campo, "")).strip():
                 errores.append(f"[{id_}] campo obligatorio vacio: '{campo}'.")
 
+        prioridad = intencion.get("prioridad", 1)
+        if isinstance(prioridad, bool) or not isinstance(prioridad, int) or prioridad < 1:
+            errores.append(f"[{id_}] 'prioridad' debe ser un entero desde 1.")
+
         if "activa" in intencion and not isinstance(intencion["activa"], bool):
             errores.append(f"[{id_}] 'activa' debe ser true o false.")
 
