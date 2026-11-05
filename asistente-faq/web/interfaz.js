@@ -27,15 +27,23 @@ const TEXTOS = {
 };
 
 const Interfaz = (() => {
-  let conversacion, entrada, boton;
+  let conversacion, entrada, boton, anuncio;
 
   function burbuja(texto, quien) {
     const div = document.createElement("div");
     div.className = `burbuja ${quien}`;
     div.textContent = texto;
     conversacion.appendChild(div);
+    if (quien === "bot") anunciar(texto);
     desplazar();
     return div;
+  }
+
+  // Lo que dice el asistente se anuncia al lector de pantalla. Se vacia antes
+  // de escribir para que un mensaje repetido tambien se lea.
+  function anunciar(texto) {
+    anuncio.textContent = "";
+    requestAnimationFrame(() => { anuncio.textContent = texto; });
   }
 
   function opciones(lista) {
@@ -53,6 +61,12 @@ const Interfaz = (() => {
         cont.querySelectorAll("button").forEach((x) => (x.disabled = true));
         burbuja(etiqueta, "usuario");
         accion();
+        // El boton pulsado queda deshabilitado y el navegador saca el foco a
+        // la pagina: quien usa teclado o lector de pantalla perderia su
+        // posicion. Se lleva el foco a la primera opcion nueva.
+        const nuevas = conversacion.lastElementChild;
+        const primera = nuevas && nuevas.querySelector("button:not(:disabled)");
+        if (primera) primera.focus();
       });
       cont.appendChild(b);
     }
@@ -147,11 +161,19 @@ const Interfaz = (() => {
   async function iniciar() {
     // Dentro del marco de insertar.js el asistente ocupa todo el marco; abierto
     // directamente conserva su caja centrada.
-    if (window.self !== window.top) document.body.classList.add("embebido");
+    if (window.self !== window.top) {
+      document.body.classList.add("embebido");
+      // Las teclas pulsadas dentro del marco no llegan a la pagina anfitriona:
+      // se le avisa para que Escape cierre el asistente tambien desde aqui.
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") window.parent.postMessage({ tipo: "asistente-faq:cerrar" }, "*");
+      });
+    }
 
     conversacion = document.getElementById("conversacion");
     entrada = document.getElementById("entrada");
     boton = document.getElementById("enviar");
+    anuncio = document.getElementById("anuncio");
 
     boton.addEventListener("click", enviar);
     entrada.addEventListener("keydown", (e) => {
