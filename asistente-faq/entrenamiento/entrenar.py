@@ -29,6 +29,7 @@ from catalogo import (
     CLASE_FUERA,
     RAIZ,
     SALIDA_WEB,
+    cargar_aceptacion,
     cargar_catalogo,
     cargar_fuera_de_alcance,
     catalogo_para_web,
@@ -148,6 +149,23 @@ def cobertura(tokens, conocidos):
     return sum(t in conocidos for t in tokens) / len(tokens)
 
 
+def decision_navegador(prob, tokens, conocidos, clases, umbral, cobertura_minima):
+    """Lo que haria web/motor.js con esta consulta: el id de la intencion que
+    responderia, o "menu" si deriva. Gemela de Motor.clasificar; si cambian
+    las reglas alli, deben cambiar aqui.
+
+    `prob` son las probabilidades del modelo para la consulta.
+    """
+    if not any(t in conocidos for t in tokens):
+        return "menu"                              # sin terminos conocidos
+    if cobertura(tokens, conocidos) < cobertura_minima:
+        return "menu"
+    p = int(np.argmax(prob))
+    if clases[p] == CLASE_FUERA or prob[p] < umbral:
+        return "menu"
+    return clases[p]
+
+
 def validacion_cruzada(clases, ejemplos):
     """Mide el modelo con validacion cruzada.
 
@@ -183,11 +201,9 @@ def validacion_cruzada(clases, ejemplos):
 
         for fila, (tokens, _, _) in enumerate(prueba):
             r, p = int(real[fila]), int(pred[fila])
-            responde = (
-                X_pru[fila].sum() > 0 and p != fuera
-                and prob[fila][p] >= umbral
-                and cobertura(tokens, conocidos) >= cobertura_minima
-            )
+            responde = decision_navegador(
+                prob[fila], tokens, conocidos, clases, umbral, cobertura_minima
+            ) != "menu"
             if r == fuera:
                 ajenas_total += 1
                 ajenas_respondidas += int(responde)
@@ -218,10 +234,59 @@ def validacion_cruzada(clases, ejemplos):
     }
 
 
+def prueba_de_aceptacion(modelo, vocabulario, clases, casos):
+    """Pasa cada consulta por el modelo con las reglas del navegador.
+
+    Responder la intencion esperada es correcto; derivar al menu una consulta
+    del catalogo es seguro (se informa); responder cualquier otra intencion,
+    o responder algo a una consulta que esperaba "menu", es error.
+    Devuelve el numero de errores.
+    """
+    umbral, cobertura_minima = leer_umbrales()
+    conocidos = set(vocabulario)
+    tokens = [normalizar(c["consulta"]) for c in casos]
+    X, _ = vectorizar([(t, 0, 0) for t in tokens], vocabulario, len(clases))
+    prob = modelo.predict(X, verbose=0)
+
+    bien, al_menu, errores = 0, [], []
+    for fila, caso in enumerate(casos):
+        decision = decision_navegador(
+            prob[fila], tokens[fila], conocidos, clases, umbral, cobertura_minima
+        )
+        if decision == caso["esperado"]:
+            bien += 1
+        elif decision == "menu":
+            al_menu.append(caso)
+        else:
+            errores.append((caso, decision))
+
+    print(f"\nPruebas de aceptacion: {bien}/{len(casos)} correctas, "
+          f"{len(al_menu)} derivadas al menu, {len(errores)} respuestas equivocadas.")
+    for caso in al_menu:
+        print(f"  menu   '{caso['consulta']}' (esperaba {caso['esperado']})")
+    for caso, decision in errores:
+        print(f"  ERROR  '{caso['consulta']}' respondio {decision} "
+              f"(esperaba {caso['esperado']})")
+    return len(errores)
+
+
+def validar_aceptacion(casos, clases):
+    """Cada caso debe esperar "menu" o una intencion que el modelo conoce."""
+    validos = set(clases) - {CLASE_FUERA} | {"menu"}
+    malos = [c for c in casos if c.get("esperado") not in validos]
+    for c in malos:
+        print(f"Caso de aceptacion invalido: '{c.get('consulta')}' espera "
+              f"'{c.get('esperado')}', que no es una intencion entrenada ni 'menu'.")
+    return not malos
+
+
 def main():
     datos = cargar_catalogo()
     ajenas = cargar_fuera_de_alcance()
     clases, ejemplos = asignar_pliegues(datos, ajenas)
+    casos_aceptacion = cargar_aceptacion()
+    if not validar_aceptacion(casos_aceptacion, clases):
+        return 1
     print(f"Intenciones: {len(clases) - (1 if ajenas else 0)}   "
           f"Patrones: {len(ejemplos) - len(ajenas)}   Fuera de alcance: {len(ajenas)}")
     print(f"Validacion cruzada de {PLIEGUES} pliegues:")
@@ -269,6 +334,16 @@ def main():
     print(f"\nEntrenando el modelo final: {len(vocabulario)} terminos, "
           f"{len(ejemplos)} patrones.")
     modelo = entrenar_modelo(X, y, SEMILLA)
+
+    # Pruebas de aceptacion sobre el modelo que se va a publicar (no sobre los
+    # de los pliegues): es el que ve el estudiante, y entrenado en otra maquina
+    # puede decidir distinto en consultas concretas aunque cumpla las metricas.
+    if casos_aceptacion:
+        errores = prueba_de_aceptacion(modelo, vocabulario, clases, casos_aceptacion)
+        if errores:
+            print("\nNo se publica: el modelo respondio mal consultas de "
+                  "contenido/consultas-de-aceptacion.json (ver arriba).")
+            return 1
 
     # ---- Exportacion ----
     SALIDA_MODELO.mkdir(exist_ok=True)

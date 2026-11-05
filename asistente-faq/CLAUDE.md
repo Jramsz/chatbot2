@@ -102,7 +102,10 @@ Por debajo de cualquiera se deriva al menú, nunca se entrega la intención más
 probable. Los valores se eligen con `entrenamiento/calibrar.py`, que mide cuántas
 consultas ajenas reciben respuesta; no cambiarlos sin volver a medir.
 `entrenar.py` lee esos valores de `motor.js` (una sola fuente) y no publica si
-las consultas ajenas respondidas superan `AJENAS_MAXIMA`. El validador impide
+las consultas ajenas respondidas superan `AJENAS_MAXIMA`, ni si el modelo final
+responde con una intención equivocada alguna consulta de
+`contenido/consultas-de-aceptacion.json`. Cada respuesta equivocada que alguien
+encuentre en el sitio se agrega ahí como caso: así no vuelve a publicarse. El validador impide
 que una consulta de `fuera-de-alcance.json` coincida con un patrón del catálogo.
 
 Para una institución pública, informar mal es peor que no responder.
@@ -184,6 +187,7 @@ que el navegador cargue el modelo y los datos.
 ```
 contenido/intenciones.json      Catálogo. Único archivo que edita el ministerio.
 contenido/fuera-de-alcance.json Consultas que NO deben responderse (lo mantiene el equipo).
+contenido/consultas-de-aceptacion.json  Consultas con respuesta esperada; bloquean la publicación.
 entrenamiento/                  Python: preprocesamiento, validación, entrenamiento.
 web/                            Widget: interfaz, motor, preprocesamiento gemelo.
 web/lib/                        TensorFlow.js local, copiado desde pnpm (pnpm run libs).
