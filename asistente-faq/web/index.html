@@ -15,7 +15,11 @@
       <h1>Asistente de preguntas frecuentes</h1>
     </header>
 
-    <div id="conversacion" class="conversacion" aria-live="polite"></div>
+    <!-- La conversacion no es region viva: contiene botones, y el lector de
+         pantalla los leeria todos cada vez. Solo los mensajes del asistente
+         se anuncian, por #anuncio. -->
+    <div id="conversacion" class="conversacion" aria-label="Conversación"></div>
+    <div id="anuncio" class="oculto" role="status" aria-live="polite"></div>
 
     <div class="entrada-zona">
       <label class="oculto" for="entrada">Escribe tu consulta</label>

@@ -79,10 +79,20 @@
   }
 
   boton.addEventListener("click", () => alternar(boton.getAttribute("aria-expanded") !== "true"));
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && boton.getAttribute("aria-expanded") === "true") {
+  function cerrarConEscape() {
+    if (boton.getAttribute("aria-expanded") === "true") {
       alternar(false);
       boton.focus();
+    }
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") cerrarConEscape();
+  });
+  // Escape pulsado dentro del marco: el asistente lo avisa con un mensaje.
+  // Solo se atiende si viene de nuestro propio marco.
+  window.addEventListener("message", (e) => {
+    if (marco && e.source === marco.contentWindow && e.data && e.data.tipo === "asistente-faq:cerrar") {
+      cerrarConEscape();
     }
   });
 

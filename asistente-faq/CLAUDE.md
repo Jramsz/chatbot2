@@ -211,6 +211,9 @@ README.md                       Presentación y pasos de uso.
 - Los comentarios explican **por qué**, no qué hace la línea.
 - Todo texto visible para el usuario vive en `TEXTOS` (`interfaz.js`) o en
   `contenido/`, nunca disperso en el código.
+- Accesibilidad: el foco nunca debe quedar perdido en la página (tras
+  deshabilitar un botón se mueve a la primera opción nueva), y lo que dice el
+  asistente se anuncia por `#anuncio`, no por la conversación completa.
 - JavaScript sin framework. El widget debe cargar rápido en conexiones móviles
   lentas y seguir funcionando durante años sin mantenimiento de dependencias.
 - El `id` de una intención es permanente. No se reutiliza ni se modifica una
