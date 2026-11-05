@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "entrenamiento"))
 
 import actualizar_catalogo as ac  # noqa: E402
-from catalogo import CLASE_FUERA, cargar_fuera_de_alcance  # noqa: E402
+from catalogo import CLASE_FUERA, cargar_fuera_de_alcance, leer_umbrales  # noqa: E402
 from validar import validar  # noqa: E402
 
 try:
@@ -50,6 +50,42 @@ class FueraDeAlcance(unittest.TestCase):
     def test_sin_ajenas_no_hay_clase_extra(self):
         clases, _ = entrenar.asignar_pliegues(datos("a", "b"))
         self.assertEqual(clases, ["a", "b"])
+
+
+class Colisiones(unittest.TestCase):
+    def test_consulta_ajena_igual_a_un_patron_es_error(self):
+        errores, _ = validar(datos("a"), ["Tres CUATRO"])   # igual tras normalizar
+        self.assertTrue(any("fuera de alcance" in e for e in errores))
+
+    def test_consulta_ajena_distinta_no_es_error(self):
+        errores, _ = validar(datos("a"), ["quien gano el partido"])
+        self.assertEqual(errores, [])
+
+    def test_el_repositorio_no_tiene_colisiones(self):
+        import json
+        raiz = Path(__file__).resolve().parent.parent
+        catalogo = json.loads((raiz / "contenido" / "intenciones.json").read_text(encoding="utf-8"))
+        errores, _ = validar(catalogo, cargar_fuera_de_alcance())
+        self.assertEqual(errores, [])
+
+
+class Umbrales(unittest.TestCase):
+    def test_se_leen_de_motor_js(self):
+        umbral, cobertura = leer_umbrales()
+        self.assertTrue(0 < umbral <= 1)
+        self.assertTrue(0 <= cobertura <= 1)
+
+    def test_falla_si_motor_js_no_los_declara(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
+            f.write("const OTRA = 1;")
+        with self.assertRaises(ValueError):
+            leer_umbrales(f.name)
+
+    @unittest.skipIf(entrenar is None, "requiere numpy")
+    def test_cobertura(self):
+        self.assertEqual(entrenar.cobertura(["a", "b", "c", "d"], {"a", "b", "c"}), 0.75)
+        self.assertEqual(entrenar.cobertura([], {"a"}), 0.0)
 
 
 if __name__ == "__main__":

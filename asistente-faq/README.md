@@ -104,10 +104,17 @@ modelo clasifica mal sin emitir ningún error visible.
 python entrenamiento/entrenar.py
 ```
 
-Mide la exactitud con validación cruzada de 5 pliegues y, si la media alcanza
-`EXACTITUD_MINIMA`, reentrena con todos los patrones y exporta el modelo junto
-con el vocabulario, las clases y el catálogo. Si queda por debajo, se detiene
-sin publicar. Tarda unos minutos.
+Mide el modelo con validación cruzada de 5 pliegues y solo publica si cumple
+**las dos** condiciones (provisionales, a revisar con el contenido real):
+
+- `EXACTITUD_MINIMA` (0.75): aciertos sobre los patrones del catálogo.
+- `AJENAS_MAXIMA` (15 %): consultas de `fuera-de-alcance.json` que recibirían
+  respuesta con el umbral y la cobertura de `web/motor.js`.
+
+Si cumple, reentrena con todos los patrones y exporta el modelo junto con el
+vocabulario, las clases y el catálogo. Si no, se detiene sin publicar e indica
+por qué. También muestra las intenciones que más se confunden entre sí, que es
+donde conviene reforzar patrones. Tarda unos minutos.
 
 Las intenciones sin patrones no se entrenan: solo aparecen en el menú.
 
@@ -193,8 +200,9 @@ subdirectorio sin modificaciones.
 ## Pendientes
 
 - [ ] Definir titularidad y licencia con el supervisor
-- [ ] Acordar `EXACTITUD_MINIMA`, `UMBRAL_CONFIANZA` y `COBERTURA_MINIMA` con el
-      supervisor (ver la tabla de `python entrenamiento/calibrar.py`)
+- [ ] Acordar `EXACTITUD_MINIMA`, `AJENAS_MAXIMA`, `UMBRAL_CONFIANZA` y
+      `COBERTURA_MINIMA` con el supervisor (ver la tabla de
+      `python entrenamiento/calibrar.py`) y volver a medirlos con el contenido real
 - [ ] Obtener el catálogo del MINEDUCYT ordenado por frecuencia de consulta
 - [ ] Automatizar validación, entrenamiento y conversión en el flujo de publicación
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados

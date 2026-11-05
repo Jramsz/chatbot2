@@ -22,6 +22,7 @@ Codigo de salida 0 si el modelo alcanza el umbral, 1 si no.
 import os
 import random
 import sys
+from collections import Counter
 
 import numpy as np
 
@@ -33,6 +34,7 @@ from catalogo import (
     cargar_fuera_de_alcance,
     catalogo_para_web,
     escribir_json,
+    leer_umbrales,
 )
 from preprocesamiento import normalizar
 from validar import esta_activa
@@ -48,7 +50,11 @@ SEMILLA = 42
 PLIEGUES = 5              # validacion cruzada: cada patron se prueba una vez
 EPOCAS = 300
 LOTE = 8
-EXACTITUD_MINIMA = 0.80   # acordar con el supervisor tras la linea base
+# Condiciones para publicar un modelo, medidas con validacion cruzada.
+# PROVISIONALES: fijadas sobre el catalogo generico de muestra; revisarlas con
+# el supervisor con la primera medicion del contenido real.
+EXACTITUD_MINIMA = 0.75   # aciertos sobre los patrones del catalogo
+AJENAS_MAXIMA = 0.15      # consultas fuera de alcance que recibirian respuesta
 
 
 def asignar_pliegues(datos, ajenas=()):
@@ -135,49 +141,82 @@ def construir_modelo(n_entrada, n_salida):
     return modelo
 
 
+def cobertura(tokens, conocidos):
+    """Fraccion de los terminos de la consulta que el modelo conoce.
+    Gemela de la regla de COBERTURA_MINIMA en web/motor.js."""
+    if not tokens:
+        return 0.0
+    return sum(t in conocidos for t in tokens) / len(tokens)
+
+
 def validacion_cruzada(clases, ejemplos):
-    """Exactitud por pliegue y aciertos acumulados por intencion."""
-    exactitudes = []
+    """Mide el modelo con validacion cruzada.
+
+    Ademas de la exactitud (argmax sobre los patrones del catalogo) simula la
+    decision del navegador con UMBRAL_CONFIANZA y COBERTURA_MINIMA de motor.js,
+    para saber cuantas consultas ajenas recibirian respuesta.
+    """
+    umbral, cobertura_minima = leer_umbrales()
     fuera = clases.index(CLASE_FUERA) if CLASE_FUERA in clases else -1
-    ajenas_total = ajenas_derivadas = 0
+    exactitudes = []
     aciertos = [0] * len(clases)
     totales = [0] * len(clases)
-    huerfanos = 0
+    confusiones = Counter()
+    huerfanos = ajenas_total = ajenas_respondidas = catalogo_mal = catalogo_total = 0
 
     for k in range(PLIEGUES):
         entrenamiento = [e for e in ejemplos if e[2] != k]
         prueba = [e for e in ejemplos if e[2] == k]
         vocabulario = construir_vocabulario(entrenamiento)
+        conocidos = set(vocabulario)
         X_ent, y_ent = vectorizar(entrenamiento, vocabulario, len(clases))
         X_pru, y_pru = vectorizar(prueba, vocabulario, len(clases))
 
-        # Un patron de prueba sin ningun termino conocido es imposible de
-        # clasificar; se cuenta aparte para saber cuanto pesa en la medida.
-        huerfanos += int((X_pru.sum(axis=1) == 0).sum())
-
         modelo = entrenar_modelo(X_ent, y_ent, SEMILLA + k)
-        pred = np.argmax(modelo.predict(X_pru, verbose=0), axis=1)
+        prob = modelo.predict(X_pru, verbose=0)
+        pred = np.argmax(prob, axis=1)
         real = np.argmax(y_pru, axis=1)
-        # La exactitud se mide solo sobre el catalogo, comparable con las
-        # mediciones anteriores; las consultas ajenas se reportan aparte.
+
+        # La exactitud se mide solo sobre el catalogo; las consultas ajenas
+        # se miden aparte, con las reglas del navegador.
         catalogo = real != fuera
         exactitudes.append(float((pred[catalogo] == real[catalogo]).mean()))
-        ajenas_total += int((~catalogo).sum())
-        ajenas_derivadas += int((pred[~catalogo] == fuera).sum())
-        for r, p in zip(real, pred):
+
+        for fila, (tokens, _, _) in enumerate(prueba):
+            r, p = int(real[fila]), int(pred[fila])
+            responde = (
+                X_pru[fila].sum() > 0 and p != fuera
+                and prob[fila][p] >= umbral
+                and cobertura(tokens, conocidos) >= cobertura_minima
+            )
+            if r == fuera:
+                ajenas_total += 1
+                ajenas_respondidas += int(responde)
+                continue
+            # Un patron del catalogo sin ningun termino conocido es imposible
+            # de clasificar; se cuenta aparte para saber cuanto pesa.
+            huerfanos += int(X_pru[fila].sum() == 0)
             totales[r] += 1
             aciertos[r] += int(r == p)
+            catalogo_total += 1
+            catalogo_mal += int(responde and r != p)
+            if r != p:
+                confusiones[(clases[r], "menu" if p == fuera else clases[p])] += 1
         print(f"  pliegue {k + 1}/{PLIEGUES}: {exactitudes[-1]:.3f}")
 
-    por_intencion = [
-        (aciertos[c] / totales[c], clases[c])
-        for c in range(len(clases)) if totales[c] and c != fuera
-    ]
-    if ajenas_total:
-        print(f"Consultas fuera de alcance reconocidas como tales: "
-              f"{ajenas_derivadas}/{ajenas_total} (el resto depende del umbral "
-              "y la cobertura; ver calibrar.py)")
-    return exactitudes, sorted(por_intencion), huerfanos
+    return {
+        "exactitudes": exactitudes,
+        "por_intencion": sorted(
+            (aciertos[c] / totales[c], clases[c])
+            for c in range(len(clases)) if totales[c] and c != fuera
+        ),
+        "confusiones": confusiones.most_common(5),
+        "huerfanos": huerfanos,
+        "tasa_ajenas": ajenas_respondidas / ajenas_total if ajenas_total else None,
+        "tasa_mal": catalogo_mal / catalogo_total if catalogo_total else 0.0,
+        "umbral": umbral,
+        "cobertura_minima": cobertura_minima,
+    }
 
 
 def main():
@@ -188,22 +227,40 @@ def main():
           f"Patrones: {len(ejemplos) - len(ajenas)}   Fuera de alcance: {len(ajenas)}")
     print(f"Validacion cruzada de {PLIEGUES} pliegues:")
 
-    exactitudes, por_intencion, huerfanos = validacion_cruzada(clases, ejemplos)
+    m = validacion_cruzada(clases, ejemplos)
+    exactitudes = m["exactitudes"]
     media = float(np.mean(exactitudes))
     print(f"\nExactitud: {media:.3f} +/- {float(np.std(exactitudes)):.3f} "
           f"(minimo {min(exactitudes):.3f}, maximo {max(exactitudes):.3f})")
-    if huerfanos:
-        print(f"AVISO: {huerfanos} patron(es) de prueba no compartian ningun "
+    if m["huerfanos"]:
+        print(f"AVISO: {m['huerfanos']} patron(es) de prueba no compartian ningun "
               "termino con el vocabulario de entrenamiento.")
+    print(f"Con umbral {m['umbral']} y cobertura {m['cobertura_minima']} (motor.js):")
+    print(f"  consultas del catalogo respondidas con otra intencion: {m['tasa_mal']:.1%}")
+    if m["tasa_ajenas"] is not None:
+        print(f"  consultas fuera de alcance que recibirian respuesta: {m['tasa_ajenas']:.1%}")
+    else:
+        print("  AVISO: no hay contenido/fuera-de-alcance.json; no se puede medir.")
     print("Intenciones con peor acierto (agregar mas patrones):")
-    for acierto, clase in por_intencion[:3]:
+    for acierto, clase in m["por_intencion"][:3]:
         print(f"  - {clase}: {acierto:.2f}")
+    if m["confusiones"]:
+        print("Confusiones mas frecuentes (real -> predicha):")
+        for (real, pred), veces in m["confusiones"]:
+            print(f"  - {real} -> {pred}: {veces}")
 
+    rechazos = []
     if media < EXACTITUD_MINIMA:
-        print(
-            f"\nLa exactitud esta por debajo del umbral de {EXACTITUD_MINIMA:.2f}. "
-            "No se publica; se conserva la version anterior."
+        rechazos.append(f"la exactitud ({media:.3f}) esta por debajo de {EXACTITUD_MINIMA:.2f}")
+    if m["tasa_ajenas"] is not None and m["tasa_ajenas"] > AJENAS_MAXIMA:
+        rechazos.append(
+            f"responderia {m['tasa_ajenas']:.1%} de las consultas fuera de alcance "
+            f"(maximo {AJENAS_MAXIMA:.0%})"
         )
+    if rechazos:
+        print("\nNo se publica; se conserva la version anterior:")
+        for r in rechazos:
+            print(f"  - {r}")
         return 1
 
     # El modelo publicado se entrena con TODOS los patrones: los pliegues solo

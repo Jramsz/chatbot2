@@ -7,6 +7,7 @@ el camino por el que se publico.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 CATALOGO = RAIZ / "contenido" / "intenciones.json"
 SALIDA_WEB = RAIZ / "web" / "datos"
 FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
+MOTOR_JS = RAIZ / "web" / "motor.js"
 
 # Clase extra del modelo para las consultas ajenas al catalogo. No es una
 # intencion: no esta en catalogo.json, asi que el navegador la trata como
@@ -23,10 +25,26 @@ FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
 CLASE_FUERA = "fuera-de-alcance"
 
 
+def leer_umbrales(ruta=MOTOR_JS):
+    """UMBRAL_CONFIANZA y COBERTURA_MINIMA tal como los usa el navegador.
+
+    Se leen de motor.js para que la medicion del entrenamiento use exactamente
+    los mismos valores que el widget publicado: una sola fuente.
+    """
+    texto = Path(ruta).read_text(encoding="utf-8")
+    valores = []
+    for nombre in ("UMBRAL_CONFIANZA", "COBERTURA_MINIMA"):
+        m = re.search(rf"^const {nombre} = ([0-9.]+);", texto, re.MULTILINE)
+        if not m:
+            raise ValueError(f"No se encontro 'const {nombre} = <numero>;' en {ruta}")
+        valores.append(float(m.group(1)))
+    return tuple(valores)
+
+
 def cargar_catalogo(ruta=CATALOGO):
     """Lee y valida el catalogo. Si tiene errores, termina el proceso."""
     datos = json.loads(Path(ruta).read_text(encoding="utf-8"))
-    errores, avisos = validar(datos)
+    errores, avisos = validar(datos, cargar_fuera_de_alcance())
     for a in avisos:
         print(f"AVISO: {a}")
     if errores:
