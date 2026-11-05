@@ -18,6 +18,7 @@ CATALOGO = RAIZ / "contenido" / "intenciones.json"
 SALIDA_WEB = RAIZ / "web" / "datos"
 FUERA_DE_ALCANCE = RAIZ / "contenido" / "fuera-de-alcance.json"
 MOTOR_JS = RAIZ / "web" / "motor.js"
+ACEPTACION = RAIZ / "contenido" / "consultas-de-aceptacion.json"
 
 # Clase extra del modelo para las consultas ajenas al catalogo. No es una
 # intencion: no esta en catalogo.json, asi que el navegador la trata como
@@ -57,6 +58,14 @@ def cargar_catalogo(ruta=CATALOGO):
 
 def cargar_fuera_de_alcance(ruta=FUERA_DE_ALCANCE):
     """Consultas que el asistente no debe responder. Lista vacia si no hay archivo."""
+    ruta = Path(ruta)
+    if not ruta.exists():
+        return []
+    return json.loads(ruta.read_text(encoding="utf-8")).get("consultas", [])
+
+
+def cargar_aceptacion(ruta=ACEPTACION):
+    """Consultas con su resultado esperado (id o "menu"). Lista vacia si no hay archivo."""
     ruta = Path(ruta)
     if not ruta.exists():
         return []

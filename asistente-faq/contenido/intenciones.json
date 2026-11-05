@@ -1,6 +1,6 @@
 {
   "version": "2026-1",
-  "actualizado": "2026-10-02",
+  "actualizado": "2026-11-05",
   "categorias": [
     { "id": "entrega-notas", "nombre": "Entrega de notas" },
     { "id": "tramites", "nombre": "Trámites académicos" },
@@ -11,9 +11,9 @@
     {
       "id": "notas-fecha-entrega",
       "categoria": "entrega-notas",
-      "subtema": "Fechas",
+      "subtema": "Entrega y consulta de notas",
       "prioridad": 1,
-      "pregunta": "¿Cuándo entregan las notas?",
+      "pregunta": "¿Cuándo y cómo puedo ver mis notas?",
       "patrones": [
         "cuándo entregan las notas",
         "qué día dan las notas",
@@ -34,9 +34,22 @@
         "cuándo publican las calificaciones",
         "me avisan cuando estén las notas",
         "fecha para recoger notas en el colegio",
-        "qué día es la reunión de padres para recibir notas"
+        "qué día es la reunión de padres para recibir notas",
+        "cómo consulto mis notas",
+        "dónde reviso mis calificaciones",
+        "quiero saber mis notas",
+        "cómo reviso mis calificaciones",
+        "cómo veo las notas de mi hijo",
+        "puedo ver mis notas en internet",
+        "cómo me entero de mis notas",
+        "cómo accedo a mis calificaciones",
+        "hay plataforma para revisar calificaciones",
+        "cómo hago para ver mis notas",
+        "qué día reparten las boletas",
+        "ya entregan las boletas este mes",
+        "en qué semana dan las boletas de notas"
       ],
-      "respuesta": "La entrega de notas se realiza durante la semana posterior al cierre de cada período de evaluación. La dirección de su centro educativo comunica la fecha y el horario exactos. Si no recibió el aviso, consulte en la secretaría del centro.",
+      "respuesta": "Las notas se entregan durante la semana posterior al cierre de cada período de evaluación; la dirección de su centro educativo comunica la fecha y el horario. Para consultarlas en otro momento, pregunte a su docente guía o en la secretaría del centro. Si el centro usa una plataforma en línea, la dirección le indicará cómo acceder.",
       "vigencia": "permanente"
     },
     {
@@ -592,7 +605,12 @@
         "qué hago si hay acoso en el colegio",
         "dónde reporto violencia en el centro educativo",
         "un docente trata mal a los estudiantes",
-        "cómo denuncio bullying escolar"
+        "cómo denuncio bullying escolar",
+        "a mi hija la están acosando en el colegio",
+        "le están pegando a mi hijo en clases",
+        "molestan todos los días a mi hija en la escuela",
+        "un grupo de alumnos está acosando a mi sobrino",
+        "maltratan a mi hijo en el instituto"
       ],
       "respuesta": "Informe de inmediato a la dirección del centro educativo para que active el protocolo correspondiente. Si el caso no se atiende o involucra a la dirección, puede acudir a la dirección departamental de educación o a las instituciones de protección de la niñez.",
       "vigencia": "permanente"

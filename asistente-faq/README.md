@@ -111,8 +111,13 @@ Mide el modelo con validación cruzada de 5 pliegues y solo publica si cumple
 - `AJENAS_MAXIMA` (15 %): consultas de `fuera-de-alcance.json` que recibirían
   respuesta con el umbral y la cobertura de `web/motor.js`.
 
-Si cumple, reentrena con todos los patrones y exporta el modelo junto con el
-vocabulario, las clases y el catálogo. Si no, se detiene sin publicar e indica
+Si cumple, reentrena con todos los patrones y pasa el modelo final por las
+**pruebas de aceptación** (`contenido/consultas-de-aceptacion.json`): consultas
+reales con su intención esperada, o «menu» si no debe responderse. Si alguna
+recibe una respuesta equivocada, no publica. Derivar al menú no es error. Cuando
+alguien encuentre una respuesta equivocada en el sitio, se agrega ahí.
+
+Después exporta el modelo junto con el vocabulario, las clases y el catálogo. Si no, se detiene sin publicar e indica
 por qué. También muestra las intenciones que más se confunden entre sí, que es
 donde conviene reforzar patrones. Tarda unos minutos.
 
