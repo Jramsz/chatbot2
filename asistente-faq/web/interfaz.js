@@ -134,6 +134,10 @@ const Interfaz = (() => {
   }
 
   async function iniciar() {
+    // Dentro del marco de insertar.js el asistente ocupa todo el marco; abierto
+    // directamente conserva su caja centrada.
+    if (window.self !== window.top) document.body.classList.add("embebido");
+
     conversacion = document.getElementById("conversacion");
     entrada = document.getElementById("entrada");
     boton = document.getElementById("enviar");

@@ -163,6 +163,7 @@ python entrenamiento/entrenar.py                # entrena, evalúa y exporta
 python entrenamiento/actualizar_catalogo.py    # solo catálogo, sin reentrenar
 python entrenamiento/calibrar.py                # mide umbral y cobertura
 pnpm test                                       # pruebas del motor (solo Node)
+python entrenamiento/publicar.py                # todo lo anterior + conversión → entrega/
 python -m unittest discover -s pruebas -p "test_*.py"   # pruebas de Python
 
 # tensorflowjs va en su propio entorno (.venv-conversion) por el conflicto con
@@ -190,7 +191,11 @@ package.json  scripts/          Versión fijada de las librerías del navegador.
 web/datos/  web/modelo/         Generados. No editar a mano.
                                 datos/ = vocabulario.json, clases.json, catalogo.json
 modelo/                         Keras (modelo.h5). Generado; fuera de git.
-docs/manual-actualizacion.md    Guía para el ministerio.
+docs/manual-actualizacion.md    Guía de contenido para el ministerio.
+docs/integracion.md             Guía para insertar el widget en un sitio.
+demo/index.html                 Sitio de ejemplo con el widget embebido (no es entregable).
+web/insertar.js                 Botón flotante + marco: lo que pega el sitio anfitrión.
+entrega/                        Generado por publicar.py. No editar.
 README.md                       Presentación y pasos de uso.
 ```
 
@@ -234,8 +239,8 @@ README.md                       Presentación y pasos de uso.
       `EXACTITUD_MINIMA` (0.75, provisional), `AJENAS_MAXIMA` (15 %),
       `UMBRAL_CONFIANZA` (0.9) y `COBERTURA_MINIMA` (0.6). Volver a medir con
       el contenido real: la exactitud depende del número de intenciones
-- [ ] Automatizar validación, verificación, entrenamiento y conversión en el
-      flujo de publicación
+- [x] Automatizar validación, verificación, entrenamiento y conversión:
+      `publicar.py` y `.github/workflows/publicar.yml` (GitHub Pages)
 - [ ] Si se actualiza `web/lib/tf.min.js`, reconvertir y probar el modelo con
       esa misma versión de TensorFlow.js
 - [ ] Designar responsable del contenido y del reentrenamiento en el ministerio

@@ -5,16 +5,15 @@ Flujo:
     1. valida el catalogo (llama a validar.py)
     2. mide la exactitud con validacion cruzada (el vocabulario de cada
        pliegue se construye solo con sus patrones de entrenamiento)
-    3. aplica el umbral de aceptacion sobre la exactitud media
+    3. aplica las condiciones de publicacion (EXACTITUD_MINIMA, AJENAS_MAXIMA)
     4. si lo supera, reentrena con TODOS los patrones
     5. guarda modelo Keras, vocabulario, clases y respuestas
 
 Uso:
     python entrenamiento/entrenar.py
 
-Tras esto, convertir el modelo para el navegador:
-    tensorflowjs_converter --input_format keras \\
-        modelo/modelo.h5 web/modelo
+Normalmente no se ejecuta solo: publicar.py lo llama y despues convierte el
+modelo para el navegador y arma el entregable.
 
 Codigo de salida 0 si el modelo alcanza el umbral, 1 si no.
 """
@@ -286,9 +285,7 @@ def main():
 
     print(f"\nModelo guardado en {SALIDA_MODELO / 'modelo.h5'}")
     print(f"Datos para el navegador en {SALIDA_WEB}")
-    print("\nSiguiente paso:")
-    print("  tensorflowjs_converter --input_format keras "
-          f"{SALIDA_MODELO / 'modelo.h5'} {RAIZ / 'web' / 'modelo'}")
+    print("Para convertirlo y armar el entregable: python entrenamiento/publicar.py")
     return 0
 
 
