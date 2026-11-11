@@ -6,8 +6,9 @@ Pasos, en este orden; si uno falla, se detiene sin armar nada:
     2. verifica Python contra JavaScript       (verificar_equivalencia.py)
     3. entrena y aplica las condiciones        (entrenar.py)
     4. convierte el modelo a TensorFlow.js     (tensorflowjs_converter)
-    5. comprueba que modelo, vocabulario y clases coinciden
-    6. copia todo en la carpeta de salida
+    5. instala modelo, vocabulario y clases en web/, juntos
+    6. comprueba que modelo, vocabulario y clases coinciden
+    7. copia todo en la carpeta de salida
 
 Resultado (por defecto en entrega/):
     entrega/asistente/   El widget. Es lo que se entrega al ministerio.
@@ -34,6 +35,8 @@ RAIZ = Path(__file__).resolve().parent.parent
 ENTRENAMIENTO = RAIZ / "entrenamiento"
 WEB = RAIZ / "web"
 DEMO = RAIZ / "demo"
+MODELO = RAIZ / "modelo"            # lo que deja entrenar.py
+CONVERTIDO = MODELO / "tfjs"        # el modelo convertido, antes de instalarlo
 
 CONVERSOR_POR_DEFECTO = (
     RAIZ / ".venv-conversion" / "Scripts" / "tensorflowjs_converter.exe"
@@ -49,12 +52,28 @@ def paso(titulo, comando):
         sys.exit(1)
 
 
-def comprobar_contrato():
+def instalar_modelo(origen=MODELO, convertido=CONVERTIDO, web=WEB):
+    """Copia a web/ el modelo convertido junto con SU vocabulario y SUS clases.
+
+    Es el unico punto donde cambian web/modelo, web/datos/vocabulario.json y
+    web/datos/clases.json, y solo despues de una conversion exitosa: asi no
+    puede quedar un modelo de una generacion con datos de otra (invariante 6).
+    Una comprobacion de tamanos no lo detectaria si solo cambia el orden de
+    las clases, por ejemplo al reordenar intenciones.json.
+    """
+    shutil.rmtree(web / "modelo", ignore_errors=True)
+    shutil.copytree(convertido, web / "modelo")
+    (web / "datos").mkdir(parents=True, exist_ok=True)
+    for nombre in ("vocabulario.json", "clases.json"):
+        shutil.copy(origen / nombre, web / "datos" / nombre)
+
+
+def comprobar_contrato(web=WEB):
     """Invariante 6: el modelo convertido y los datos deben ser de la misma
     generacion. Se revisa aqui para que un entregable inconsistente nunca
     llegue a publicarse."""
-    datos = WEB / "datos"
-    modelo = json.loads((WEB / "modelo" / "model.json").read_text(encoding="utf-8"))
+    datos = web / "datos"
+    modelo = json.loads((web / "modelo" / "model.json").read_text(encoding="utf-8"))
     vocabulario = json.loads((datos / "vocabulario.json").read_text(encoding="utf-8"))
     clases = json.loads((datos / "clases.json").read_text(encoding="utf-8"))
 
@@ -67,7 +86,7 @@ def comprobar_contrato():
               f"vocabulario.json ({len(vocabulario)}) y clases.json ({len(clases)}).")
         sys.exit(1)
     for peso in modelo["weightsManifest"][0]["paths"]:
-        if not (WEB / "modelo" / peso).exists():
+        if not (web / "modelo" / peso).exists():
             print(f"\nFalta el archivo de pesos web/modelo/{peso}.")
             sys.exit(1)
     print(f"Contrato correcto: {entradas} terminos, {salidas} clases.")
@@ -93,11 +112,15 @@ def main():
                   "Instalelo en un entorno aparte (ver requirements.txt) o use --conversor.")
             sys.exit(1)
         paso("Entrenar", [python, str(ENTRENAMIENTO / "entrenar.py")])
-        shutil.rmtree(WEB / "modelo", ignore_errors=True)
+        # Se convierte a una carpeta aparte: si la conversion falla, web/
+        # queda intacto, con el modelo y los datos anteriores, coherentes.
+        shutil.rmtree(CONVERTIDO, ignore_errors=True)
         paso("Convertir a TensorFlow.js", [
             str(opciones.conversor), "--input_format", "keras",
-            str(RAIZ / "modelo" / "modelo.h5"), str(WEB / "modelo"),
+            str(MODELO / "modelo.h5"), str(CONVERTIDO),
         ])
+        print("\n== Instalar modelo, vocabulario y clases en web/")
+        instalar_modelo()
 
     print("\n== Comprobar modelo, vocabulario y clases")
     comprobar_contrato()
