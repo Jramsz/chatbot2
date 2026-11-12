@@ -2,6 +2,11 @@
 
 Guía para el personal del MINEDUCYT. No requiere conocimientos de programación.
 
+> **La forma recomendada de editar es el editor del catálogo**: una página con
+> formularios, sin tocar archivos. Ver `editor.md`. Este manual describe el
+> formato del archivo, útil para entender qué pide el editor o para editarlo
+> directamente.
+
 ## Qué se puede editar
 
 Solo el archivo `contenido/intenciones.json`. Contiene todas las preguntas, las
@@ -66,8 +71,13 @@ ahora, y los patrones cuando haya tiempo.
 
 ## Después de editar
 
-Envíe el archivo editado al equipo técnico. Hay dos caminos, según lo que
-cambió:
+**Con el editor**, al pulsar «Guardar y publicar» el resto es automático:
+validación, entrenamiento, pruebas de aceptación y publicación, en unos
+minutos.
+
+**Si se edita el archivo directamente**, cada cambio que llega a la rama
+principal del repositorio también se publica solo. Para hacerlo a mano, el
+equipo técnico tiene dos caminos, según lo que cambió:
 
 | Qué cambió | Qué hace el equipo | Tiempo |
 |---|---|---|
@@ -78,8 +88,6 @@ Mientras no se reentrene, una pregunta nueva con patrones **aparece en el menú*
 y se puede consultar por categorías; solo falta que el asistente la reconozca al
 escribirla. Si se quita una pregunta que el modelo ya conoce, el menú deja de
 mostrarla y, si alguien la escribe, el asistente lo deriva al menú.
-
-La automatización de este flujo está pendiente.
 
 Si el archivo tiene algún error, **no se publica nada** y la versión anterior
 sigue funcionando mientras se corrige. Tampoco se publica un modelo que no

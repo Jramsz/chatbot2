@@ -270,22 +270,38 @@ def prueba_de_aceptacion(modelo, vocabulario, clases, casos):
     return len(errores)
 
 
-def validar_aceptacion(casos, clases):
-    """Cada caso debe esperar "menu" o una intencion que el modelo conoce."""
-    validos = set(clases) - {CLASE_FUERA} | {"menu"}
-    malos = [c for c in casos if c.get("esperado") not in validos]
-    for c in malos:
-        print(f"Caso de aceptacion invalido: '{c.get('consulta')}' espera "
-              f"'{c.get('esperado')}', que no es una intencion entrenada ni 'menu'.")
-    return not malos
+def validar_aceptacion(casos, clases, ids_existentes):
+    """Separa los casos que se pueden evaluar.
+
+    Devuelve (casos_a_evaluar, valido). Un caso que espera una intencion que
+    existe pero no se entrena (retirada con "activa": false, o sin patrones)
+    se omite con un aviso: retirar una pregunta no debe bloquear la
+    publicacion. Un caso que espera un id inexistente es un error.
+    """
+    entrenadas = set(clases) - {CLASE_FUERA} | {"menu"}
+    evaluar, valido = [], True
+    for c in casos:
+        esperado = c.get("esperado")
+        if esperado in entrenadas:
+            evaluar.append(c)
+        elif esperado in ids_existentes:
+            print(f"AVISO: se omite el caso '{c.get('consulta')}': '{esperado}' "
+                  "esta retirada o no tiene patrones.")
+        else:
+            print(f"Caso de aceptacion invalido: '{c.get('consulta')}' espera "
+                  f"'{esperado}', que no existe en el catalogo ni es 'menu'.")
+            valido = False
+    return evaluar, valido
 
 
 def main():
     datos = cargar_catalogo()
     ajenas = cargar_fuera_de_alcance()
     clases, ejemplos = asignar_pliegues(datos, ajenas)
-    casos_aceptacion = cargar_aceptacion()
-    if not validar_aceptacion(casos_aceptacion, clases):
+    casos_aceptacion, casos_validos = validar_aceptacion(
+        cargar_aceptacion(), clases, {i["id"] for i in datos["intenciones"]}
+    )
+    if not casos_validos:
         return 1
     print(f"Intenciones: {len(clases) - (1 if ajenas else 0)}   "
           f"Patrones: {len(ejemplos) - len(ajenas)}   Fuera de alcance: {len(ajenas)}")
