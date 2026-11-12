@@ -45,6 +45,11 @@ Formulación correcta cuando haya que explicarlo:
 > navegación ocurren en el dispositivo del estudiante, sin volver a consultar
 > al servidor.
 
+El editor del catálogo (`editor/`) tampoco es un servidor: es una página
+estática que, solo para administradores, guarda en el repositorio mediante la
+API de GitHub. El control de acceso lo hace GitHub (token con permiso de
+escritura); no agregar contraseñas propias en el cliente, no protegerían nada.
+
 Nunca decir «no hay servidor»: sí hay un servicio que entrega archivos
 estáticos. Lo que no hay es lógica de servidor.
 
@@ -205,6 +210,9 @@ modelo/                         Salida de entrenar.py: modelo.h5, vocabulario.js
                                 clases.json y tfjs/ (convertido). Fuera de git.
 docs/manual-actualizacion.md    Guía de contenido para el ministerio.
 docs/integracion.md             Guía para insertar el widget en un sitio.
+docs/editor.md                  Guía del editor del catálogo para administradores.
+editor/                         Editor del catálogo: formularios, valida y guarda en GitHub.
+                                validacion.js es gemela de validar.py (ver pruebas).
 demo/index.html                 Sitio de ejemplo con el widget embebido (no es entregable).
 web/insertar.js                 Botón flotante + marco: lo que pega el sitio anfitrión.
 entrega/                        Generado por publicar.py. No editar.

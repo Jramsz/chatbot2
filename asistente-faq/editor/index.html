@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Solo scripts y estilos propios, y conexiones solo a este sitio y a la
+       API de GitHub: el token nunca puede salir hacia otro lugar. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data:; form-action 'none'; base-uri 'none'">
+  <meta name="robots" content="noindex">
+  <title>Administración del catálogo</title>
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <header class="barra">
+    <h1>Administración del catálogo</h1>
+    <div id="sesion" class="sesion" hidden>
+      <span id="usuario"></span>
+      <button id="salir" type="button" class="secundario">Salir</button>
+    </div>
+  </header>
+
+  <div id="estado" class="estado" role="status" aria-live="polite"></div>
+
+  <!-- Ingreso: el acceso lo controla GitHub con el token. -->
+  <main id="ingreso" class="panel">
+    <h2>Ingresar</h2>
+    <p>
+      Solo pueden editar las personas con permiso de escritura en el
+      repositorio del asistente. Ingrese su token de acceso de GitHub
+      (<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">crear uno</a>;
+      ver <em>docs/editor.md</em>).
+    </p>
+    <form id="formIngreso">
+      <label for="token">Token de acceso</label>
+      <input id="token" type="password" autocomplete="off" spellcheck="false" required>
+      <button type="submit">Ingresar</button>
+    </form>
+    <p class="nota">El token se guarda solo en esta pestaña y se borra al cerrarla.</p>
+  </main>
+
+  <main id="editor" hidden>
+    <section class="herramientas" aria-label="Herramientas">
+      <label class="oculto" for="buscar">Buscar pregunta</label>
+      <input id="buscar" type="search" placeholder="Buscar pregunta, respuesta o patrón…">
+      <label class="oculto" for="filtro">Mostrar</label>
+      <select id="filtro">
+        <option value="activas">Activas</option>
+        <option value="retiradas">Retiradas</option>
+        <option value="todas">Todas</option>
+      </select>
+      <button id="agregar" type="button">+ Agregar pregunta</button>
+    </section>
+
+    <div class="columnas">
+      <section id="lista" class="lista" aria-label="Preguntas"></section>
+
+      <section id="formulario" class="panel" hidden aria-labelledby="tituloFormulario">
+        <h2 id="tituloFormulario">Editar pregunta</h2>
+        <form id="formPregunta">
+          <label for="fPregunta">Pregunta (como aparece en el menú)</label>
+          <input id="fPregunta" required>
+
+          <label for="fRespuesta">Respuesta oficial</label>
+          <textarea id="fRespuesta" rows="5" required></textarea>
+
+          <div class="fila">
+            <div>
+              <label for="fCategoria">Categoría</label>
+              <select id="fCategoria"></select>
+            </div>
+            <div>
+              <label for="fSubtema">Subtema</label>
+              <input id="fSubtema" list="subtemas" required>
+              <datalist id="subtemas"></datalist>
+            </div>
+            <div class="angosto">
+              <label for="fPrioridad">Orden</label>
+              <input id="fPrioridad" type="number" min="1" step="1" required>
+            </div>
+          </div>
+
+          <label for="fPatrones">Formas de preguntarlo (una por línea)</label>
+          <textarea id="fPatrones" rows="10"
+                    aria-describedby="ayudaPatrones"></textarea>
+          <p id="ayudaPatrones" class="nota">
+            <span id="contadorPatrones">0</span> patrones. Mínimo 4, o ninguno
+            si la pregunta solo debe estar en el menú. Incluya formas informales.
+          </p>
+
+          <label for="fId">Identificador</label>
+          <input id="fId" pattern="[a-z0-9]+(-[a-z0-9]+)*" required
+                 aria-describedby="ayudaId">
+          <p id="ayudaId" class="nota">No se puede cambiar después de guardar.</p>
+
+          <ul id="erroresPregunta" class="problemas"></ul>
+
+          <div class="acciones">
+            <button type="submit">Aplicar</button>
+            <button id="cancelar" type="button" class="secundario">Cancelar</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <section class="guardado panel" aria-labelledby="tituloGuardar">
+      <h2 id="tituloGuardar">Guardar y publicar</h2>
+      <ul id="problemas" class="problemas"></ul>
+      <label for="mensaje">Descripción del cambio</label>
+      <input id="mensaje" maxlength="200">
+      <div class="acciones">
+        <button id="guardar" type="button" disabled>Guardar y publicar</button>
+        <button id="descargar" type="button" class="secundario">Descargar intenciones.json</button>
+        <button id="recargar" type="button" class="secundario">Recargar desde GitHub</button>
+      </div>
+      <p id="publicacion" class="nota"></p>
+    </section>
+  </main>
+
+  <!-- El mismo preprocesamiento que usa el widget: una sola copia. -->
+  <script src="../asistente/preprocesamiento.js"></script>
+  <script src="validacion.js"></script>
+  <script src="github.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

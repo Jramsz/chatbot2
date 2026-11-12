@@ -82,16 +82,27 @@ class PruebaDeAceptacion(unittest.TestCase):
         self.assertEqual(self.correr(casos, {"beca": [0.95, 0.04, 0.01]}), 1)
 
     def test_casos_invalidos(self):
-        self.assertTrue(entrenar.validar_aceptacion([{"consulta": "x", "esperado": "menu"}], CLASES))
-        self.assertFalse(entrenar.validar_aceptacion([{"consulta": "x", "esperado": "zzz"}], CLASES))
-        self.assertFalse(entrenar.validar_aceptacion(
-            [{"consulta": "x", "esperado": CLASE_FUERA}], CLASES))
+        ids = {"a", "b", "retirada"}
+        _, ok = entrenar.validar_aceptacion([{"consulta": "x", "esperado": "menu"}], CLASES, ids)
+        self.assertTrue(ok)
+        _, ok = entrenar.validar_aceptacion([{"consulta": "x", "esperado": "zzz"}], CLASES, ids)
+        self.assertFalse(ok)
+        _, ok = entrenar.validar_aceptacion([{"consulta": "x", "esperado": CLASE_FUERA}], CLASES, ids)
+        self.assertFalse(ok)
+
+    def test_un_caso_de_una_intencion_retirada_se_omite_sin_bloquear(self):
+        casos = [{"consulta": "x", "esperado": "retirada"}, {"consulta": "y", "esperado": "a"}]
+        evaluar, ok = entrenar.validar_aceptacion(casos, CLASES, {"a", "b", "retirada"})
+        self.assertTrue(ok)
+        self.assertEqual([c["consulta"] for c in evaluar], ["y"])
 
 
 class ArchivoDelRepositorio(unittest.TestCase):
     def test_los_casos_esperan_intenciones_existentes(self):
         catalogo = json.loads((RAIZ / "contenido" / "intenciones.json").read_text(encoding="utf-8"))
-        ids = {i["id"] for i in catalogo["intenciones"] if i.get("activa", True) is not False}
+        # Puede esperar una intencion retirada (el caso se omite al entrenar),
+        # pero no un id que no existe.
+        ids = {i["id"] for i in catalogo["intenciones"]}
         casos = cargar_aceptacion()
         self.assertGreaterEqual(len(casos), 30)
         for c in casos:

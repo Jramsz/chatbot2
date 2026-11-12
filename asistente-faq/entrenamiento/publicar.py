@@ -12,6 +12,7 @@ Pasos, en este orden; si uno falla, se detiene sin armar nada:
 
 Resultado (por defecto en entrega/):
     entrega/asistente/   El widget. Es lo que se entrega al ministerio.
+    entrega/editor/      Administracion del catalogo (requiere acceso a GitHub).
     entrega/index.html   Pagina de demostracion con el widget embebido.
 
 Uso:
@@ -35,6 +36,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 ENTRENAMIENTO = RAIZ / "entrenamiento"
 WEB = RAIZ / "web"
 DEMO = RAIZ / "demo"
+EDITOR = RAIZ / "editor"
 MODELO = RAIZ / "modelo"            # lo que deja entrenar.py
 CONVERTIDO = MODELO / "tfjs"        # el modelo convertido, antes de instalarlo
 
@@ -130,9 +132,11 @@ def main():
     shutil.rmtree(salida, ignore_errors=True)
     shutil.copytree(WEB, salida / "asistente")
     shutil.copy(DEMO / "index.html", salida / "index.html")
+    shutil.copytree(EDITOR, salida / "editor")
     total = sum(f.stat().st_size for f in (salida / "asistente").rglob("*") if f.is_file())
     print(f"Listo: {salida}")
     print(f"  asistente/   el widget, {total / 1e6:.1f} MB (lo que se entrega)")
+    print("  editor/      administracion del catalogo")
     print("  index.html   pagina de demostracion con el widget embebido")
     print(f"\nProbar en local:  cd {salida} && python -m http.server 8000")
     return 0
