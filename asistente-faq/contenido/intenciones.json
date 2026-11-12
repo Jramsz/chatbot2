@@ -78,7 +78,12 @@
         "necesito reponer mi boleta de notas",
         "qué debo hacer porque no tengo la boleta",
         "dónde solicito otra copia de mis notas",
-        "cómo repongo una libreta de notas extraviada"
+        "cómo repongo una libreta de notas extraviada",
+        "se me perdió la boleta y necesito un duplicado",
+        "extravié la libreta de notas qué trámite hago",
+        "reposición de la libreta de calificaciones perdida",
+        "perdimos la boleta de notas de mi hija",
+        "dónde pido duplicado de la boleta extraviada"
       ],
       "respuesta": "Solicite la reposición en la secretaría de su centro educativo, presentando su documento de identidad o el de su responsable. La secretaría le indicará si el trámite tiene costo y en cuánto tiempo se entrega.",
       "vigencia": "permanente"
@@ -171,7 +176,12 @@
         "ya entregaron el paquete escolar",
         "a quiénes les dan útiles escolares",
         "por qué mi hijo no recibió cuadernos ni uniforme",
-        "dónde retiro el paquete que da el gobierno"
+        "dónde retiro el paquete que da el gobierno",
+        "cuándo reparten el paquete escolar gratuito",
+        "entrega del paquete de útiles y uniformes",
+        "dónde recogen el paquete escolar los padres",
+        "todavía no entregan el paquete escolar",
+        "fecha de entrega de uniformes y zapatos escolares"
       ],
       "respuesta": "El paquete escolar se entrega en el centro educativo donde el estudiante está matriculado. La dirección informa la fecha, el horario y quién puede retirarlo.",
       "vigencia": "permanente"
@@ -295,7 +305,13 @@
         "quiero que el maestro revise mi calificación",
         "a quién le pido revisión de una nota baja",
         "cómo hago un reclamo por mi nota final",
-        "pedir que revisen el examen porque creo que está mal calificado"
+        "pedir que revisen el examen porque creo que está mal calificado",
+        "quiero apelar la calificación del examen",
+        "la nota está mal y quiero que la corrijan",
+        "revisión de calificación por error del docente",
+        "me calificaron injustamente en la prueba",
+        "presentar queja formal por una nota",
+        "solicitar que revisen mi nota del período"
       ],
       "respuesta": "Hable primero con el docente de la asignatura para que revise la evaluación. Si el desacuerdo continúa, presente su solicitud por escrito a la dirección del centro educativo, que indicará el procedimiento y el plazo de revisión.",
       "vigencia": "permanente"
@@ -326,7 +342,13 @@
         "cuál es la escala de notas",
         "cómo sacan el promedio anual de calificaciones",
         "qué nota es la mínima para pasar el año",
-        "cómo calculan mi nota de conducta y materias"
+        "cómo calculan mi nota de conducta y materias",
+        "cuál es el promedio para aprobar el grado",
+        "cómo calculan el promedio del período",
+        "qué porcentaje tiene cada actividad en la nota",
+        "nota mínima para no reprobar una materia",
+        "cómo se pondera la nota final del año",
+        "cuánto debo sacar para aprobar con promedio"
       ],
       "respuesta": "La nota final se obtiene a partir de las evaluaciones de cada período, según la ponderación y la escala oficiales de evaluación vigentes. Su docente o la dirección del centro educativo pueden explicarle el detalle para su grado.",
       "vigencia": "permanente"
@@ -450,7 +472,12 @@
         "puedo recuperar la materia que reprobé",
         "cómo funciona repetir un grado",
         "qué sucede si no apruebo todas las materias",
-        "hay manera de pasar de año si reprobé una materia"
+        "hay manera de pasar de año si reprobé una materia",
+        "reprobé el grado y tengo que repetirlo",
+        "qué opciones hay si repruebo materias",
+        "repetir el año escolar por reprobar",
+        "recuperar asignaturas reprobadas",
+        "me quedé reprobado qué hago"
       ],
       "respuesta": "El centro educativo informa a cada estudiante, según su situación y las normas de evaluación vigentes, si debe repetir el grado o si puede recuperar asignaturas. Consulte con la dirección del centro para conocer las opciones disponibles.",
       "vigencia": "permanente"
@@ -481,7 +508,12 @@
         "cuál es la lista oficial de útiles",
         "qué me piden para el año escolar",
         "qué debo comprar además del paquete",
-        "qué materiales necesito para empezar clases"
+        "qué materiales necesito para empezar clases",
+        "lista de materiales que debo comprar",
+        "qué útiles compro para el grado de mi hijo",
+        "materiales escolares que pide la maestra",
+        "qué cosas comprar para el inicio de clases",
+        "lista de compras escolares del grado"
       ],
       "respuesta": "La lista de materiales depende del grado y la publica el centro educativo. Consulte en la dirección o con el docente guía; si su centro recibe paquete escolar, la dirección le informará qué incluye.",
       "vigencia": "permanente"
@@ -641,7 +673,12 @@
         "cómo me inscribo en la prueba nacional",
         "dónde veo los resultados de la evaluación nacional",
         "qué debo llevar a la prueba",
-        "cómo me preparo para la prueba nacional"
+        "cómo me preparo para la prueba nacional",
+        "fecha de la prueba nacional de bachillerato",
+        "evaluación nacional para estudiantes de bachillerato",
+        "resultados del examen nacional",
+        "qué contenidos evalúa la prueba nacional",
+        "sede para presentar la evaluación nacional"
       ],
       "respuesta": "Las pruebas nacionales se aplican según el calendario oficial del ministerio y el centro educativo informa a los estudiantes la fecha, el lugar y lo que deben llevar. Consulte con la dirección para la información de su grado.",
       "vigencia": "permanente"
