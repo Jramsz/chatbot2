@@ -352,14 +352,16 @@ def main():
     modelo.save(SALIDA_MODELO / "modelo.h5")
 
     # El orden del vocabulario y de las clases es parte del contrato con el
-    # navegador: si cambia sin reentrenar, las predicciones se desalinean.
-    escribir_json(SALIDA_WEB / "vocabulario.json", vocabulario)
-    escribir_json(SALIDA_WEB / "clases.json", clases)
+    # navegador: si cambia sin reentrenar, las predicciones se desalinean. Por
+    # eso se guardan junto al modelo y NO en web/: solo publicar.py los copia
+    # alli, y solo despues de convertir el modelo con exito (invariante 6).
+    escribir_json(SALIDA_MODELO / "vocabulario.json", vocabulario)
+    escribir_json(SALIDA_MODELO / "clases.json", clases)
 
     escribir_json(SALIDA_WEB / "catalogo.json", catalogo_para_web(datos))
 
-    print(f"\nModelo guardado en {SALIDA_MODELO / 'modelo.h5'}")
-    print(f"Datos para el navegador en {SALIDA_WEB}")
+    print(f"\nModelo, vocabulario y clases guardados en {SALIDA_MODELO}")
+    print(f"Catalogo para el navegador en {SALIDA_WEB / 'catalogo.json'}")
     print("Para convertirlo y armar el entregable: python entrenamiento/publicar.py")
     return 0
 

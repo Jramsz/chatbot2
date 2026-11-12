@@ -116,6 +116,12 @@ Para una institución pública, informar mal es peor que no responder.
 nunca por separado. Si cambian sin reentrenar, las predicciones se desalinean
 en silencio.
 
+Se garantiza por construcción: `entrenar.py` los deja en `modelo/` junto al
+`.h5`, y solo `publicar.py` (`instalar_modelo`) los copia a `web/datos/` con el
+modelo convertido, después de una conversión exitosa. Si la conversión falla,
+`web/` queda intacto. `comprobar_contrato` revisa además las dimensiones, y
+`motor.js` las vuelve a revisar al cargar.
+
 ### 7. El entregable es portable
 
 Sin rutas absolutas ni dominios fijos. El ministerio elige dónde alojarlo y
@@ -194,7 +200,9 @@ web/lib/                        TensorFlow.js local, copiado desde pnpm (pnpm ru
 package.json  scripts/          Versión fijada de las librerías del navegador.
 web/datos/  web/modelo/         Generados. No editar a mano.
                                 datos/ = vocabulario.json, clases.json, catalogo.json
-modelo/                         Keras (modelo.h5). Generado; fuera de git.
+                                (vocabulario y clases solo los instala publicar.py)
+modelo/                         Salida de entrenar.py: modelo.h5, vocabulario.json,
+                                clases.json y tfjs/ (convertido). Fuera de git.
 docs/manual-actualizacion.md    Guía de contenido para el ministerio.
 docs/integracion.md             Guía para insertar el widget en un sitio.
 demo/index.html                 Sitio de ejemplo con el widget embebido (no es entregable).

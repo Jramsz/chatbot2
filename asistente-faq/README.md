@@ -95,8 +95,10 @@ python entrenamiento/verificar_equivalencia.py
 ```
 
 **Obligatorio antes de publicar.** Requiere Node.js. Comprueba que las
-versiones Python y JavaScript producen los mismos tokens. Si divergen, el
-modelo clasifica mal sin emitir ningún error visible.
+versiones Python y JavaScript producen los mismos tokens para los casos escritos
+a mano y para **todos** los textos del contenido (patrones, consultas fuera de
+alcance y de aceptación). Si divergen, el modelo clasifica mal sin emitir ningún
+error visible.
 
 ### 3. Entrenar
 
@@ -117,9 +119,14 @@ reales con su intención esperada, o «menu» si no debe responderse. Si alguna
 recibe una respuesta equivocada, no publica. Derivar al menú no es error. Cuando
 alguien encuentre una respuesta equivocada en el sitio, se agrega ahí.
 
-Después exporta el modelo junto con el vocabulario, las clases y el catálogo. Si no, se detiene sin publicar e indica
-por qué. También muestra las intenciones que más se confunden entre sí, que es
-donde conviene reforzar patrones. Tarda unos minutos.
+Si alguna condición falla, se detiene sin publicar e indica por qué. Si todo
+pasa, guarda el modelo, el vocabulario y las clases en `modelo/` y el catálogo
+en `web/datos/`. Muestra además las intenciones que más se confunden entre sí,
+que es donde conviene reforzar patrones. Tarda unos minutos.
+
+`entrenar.py` no toca el modelo publicado: solo `publicar.py`, después de
+convertir con éxito, instala en `web/` el modelo junto con **su** vocabulario y
+**sus** clases. Así nunca queda un modelo de una generación con datos de otra.
 
 Las intenciones sin patrones no se entrenan: solo aparecen en el menú.
 
