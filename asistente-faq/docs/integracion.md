@@ -43,6 +43,15 @@ permitir ese dominio en `script-src` (para `insertar.js`) y en `frame-src`
 (para el marco). El asistente no carga nada de terceros: TensorFlow.js va
 incluido en `asistente/lib/`.
 
+## Editor del catálogo
+
+La carpeta `editor/` permite a los administradores editar las preguntas con
+formularios (ver `editor.md`). Guarda los cambios en el repositorio de GitHub
+del proyecto, y la publicación automática actualiza el sitio. Si el ministerio
+aloja el asistente en su propio servidor, el editor sigue funcionando mientras
+el contenido viva en ese repositorio de GitHub; la carpeta publicada se
+actualiza copiando de nuevo `asistente/` desde la versión publicada.
+
 ## Actualizar el contenido
 
 | Qué cambió | Qué se publica |
