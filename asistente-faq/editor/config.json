@@ -1,0 +1,6 @@
+{
+  "repositorio": "Jramsz/chatbot2",
+  "rama": "main",
+  "catalogo": "asistente-faq/contenido/intenciones.json",
+  "fueraDeAlcance": "asistente-faq/contenido/fuera-de-alcance.json"
+}

@@ -197,6 +197,21 @@ junto con el modelo, nunca por separado.
 
 ---
 
+## Editor del catálogo (administradores)
+
+`editor/` es una página para agregar, editar, retirar y reactivar preguntas con
+formularios, sin tocar JSON. Se ingresa con un token de GitHub de una cuenta con
+permiso de escritura en el repositorio: **el acceso lo controla GitHub**, porque
+en un sitio estático una contraseña propia no protegería nada. Al guardar, hace
+un commit en `contenido/intenciones.json` y la publicación automática hace el
+resto. Valida con las mismas reglas que `validar.py` (`editor/validacion.js`,
+comprobado por `pruebas/test_validacion_gemela.py`). Guía: `docs/editor.md`.
+
+No procesa consultas de estudiantes ni agrega servidor: solo usa la API de
+GitHub para quien administra el contenido.
+
+---
+
 ## Despliegue
 
 Un solo comando arma el entregable: valida, verifica la equivalencia, entrena
