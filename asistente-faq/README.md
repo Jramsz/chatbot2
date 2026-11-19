@@ -248,6 +248,10 @@ subdirectorio sin modificaciones.
 - [ ] Acordar `EXACTITUD_MINIMA`, `AJENAS_MAXIMA`, `UMBRAL_CONFIANZA` y
       `COBERTURA_MINIMA` con el supervisor (ver la tabla de
       `python entrenamiento/calibrar.py`) y volver a medirlos con el contenido real
-- [ ] Obtener el catálogo del MINEDUCYT ordenado por frecuencia de consulta
+- [x] ~~Catálogo del MINEDUCYT~~: no se entregará; se entrega con un catálogo
+      genérico de muestra y el ministerio carga el real con el editor
+- [ ] Designar en el ministerio quién administra el catálogo (`docs/editor.md`)
+- [ ] Con el contenido real: revisar las consultas de aceptación y fuera de
+      alcance, y volver a calibrar
 - [x] Automatizar validación, entrenamiento y conversión (`publicar.py` y GitHub Actions)
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados
