@@ -141,8 +141,13 @@ política de red del ministerio dejaría el widget sin modelo y sin aviso.
 
 ## Alcance: cobertura, no conteo
 
-El catálogo ronda las 500 preguntas, **sin cifra exacta**. El compromiso no es
-un número de intenciones sino la cobertura:
+**Estado:** el ministerio no entregará el listado real de preguntas. El
+proyecto se entrega con un **catálogo genérico de muestra** (20 preguntas,
+~450 patrones, respuestas sin datos oficiales) que demuestra el sistema
+completo, y el ministerio carga su contenido real con el editor del catálogo.
+Todas las métricas y umbrales actuales se midieron sobre ese catálogo de muestra.
+
+El compromiso no es un número de intenciones sino la cobertura:
 
 - **Catálogo (menú):** cubre todas las preguntas que aporte el ministerio.
   Agregar una cuesta solo redactar la respuesta.
@@ -253,8 +258,8 @@ README.md                       Presentación y pasos de uso.
 
 ## Pendientes
 
-- [ ] **Listado de preguntas ordenado por frecuencia de consulta** (insumo
-      crítico; sin la priorización no puede definirse el alcance de las olas)
+- [x] ~~Listado de preguntas del ministerio~~: no se entregará. Se trabaja con un
+      catálogo genérico de muestra; el ministerio carga el real con el editor
 - [ ] Titularidad y licencia: confirmar con el supervisor y con el reglamento
       de propiedad intelectual de la universidad. Hasta entonces, repositorio
       sin licencia pública
@@ -266,5 +271,9 @@ README.md                       Presentación y pasos de uso.
       `publicar.py` y `.github/workflows/publicar.yml` (GitHub Pages)
 - [ ] Si se actualiza `web/lib/tf.min.js`, reconvertir y probar el modelo con
       esa misma versión de TensorFlow.js
-- [ ] Designar responsable del contenido y del reentrenamiento en el ministerio
+- [ ] Designar en el ministerio a quién(es) administran el catálogo (cuentas de
+      GitHub con permiso de escritura; ver `docs/editor.md`)
+- [ ] Al cargar el contenido real: revisar `consultas-de-aceptacion.json` y
+      `fuera-de-alcance.json` (están escritos para el catálogo de muestra) y
+      volver a correr `calibrar.py`
 - [ ] Prueba con estudiantes reales y ampliación de patrones según resultados
