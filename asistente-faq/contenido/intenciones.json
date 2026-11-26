@@ -683,6 +683,22 @@
       ],
       "respuesta": "Las pruebas nacionales se aplican según el calendario oficial del ministerio y el centro educativo informa a los estudiantes la fecha, el lugar y lo que deben llevar. Consulte con la dirección para la información de su grado.",
       "vigencia": "permanente"
+    },
+    {
+      "id": "notas-pregunta-prueba",
+      "categoria": "entrega-notas",
+      "subtema": "Documentos",
+      "prioridad": 4,
+      "pregunta": "Pregunta de prueba",
+      "respuesta": "probando123",
+      "patrones": [
+        "pruebas",
+        "prueba",
+        "pruebassssssss",
+        "pruebasss",
+        "prba"
+      ],
+      "vigencia": "permanente"
     }
   ]
 }
