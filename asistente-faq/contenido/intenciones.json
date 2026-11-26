@@ -1,6 +1,6 @@
 {
   "version": "2026-1",
-  "actualizado": "2026-11-05",
+  "actualizado": "2026-11-26",
   "categorias": [
     { "id": "entrega-notas", "nombre": "Notas" },
     { "id": "tramites", "nombre": "Trámites y documentos" },
@@ -116,7 +116,7 @@
         "puedo pedir la constancia por otra persona",
         "necesito un papel que compruebe que soy alumno"
       ],
-      "respuesta": "Solicítela en la secretaría de su centro educativo presentando su documento de identidad o el de su responsable, e indique el año y grado cursado. La secretaría le indicará si el trámite tiene costo y en cuánto tiempo se entrega.",
+      "respuesta": "Solicítela en la secretaría de su centro educativo presentando su documento de identidad o el de su responsable, e indique el año y grado cursado. La secretaría le indicará si el trámite tiene costo y en cuánto tiempo se entregaaa.",
       "vigencia": "permanente"
     },
     {
@@ -314,7 +314,8 @@
         "solicitar que revisen mi nota del período"
       ],
       "respuesta": "Hable primero con el docente de la asignatura para que revise la evaluación. Si el desacuerdo continúa, presente su solicitud por escrito a la dirección del centro educativo, que indicará el procedimiento y el plazo de revisión.",
-      "vigencia": "permanente"
+      "vigencia": "permanente",
+      "activa": false
     },
     {
       "id": "notas-promedio",
