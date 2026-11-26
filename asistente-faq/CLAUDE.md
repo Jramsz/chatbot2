@@ -216,7 +216,6 @@ modelo/                         Salida de entrenar.py: modelo.h5, vocabulario.js
 docs/manual-actualizacion.md    Guía de contenido para el ministerio.
 docs/integracion.md             Guía para insertar el widget en un sitio.
 docs/editor.md                  Guía del editor del catálogo para administradores.
-docs/demo.md                    Guion y lista de comprobación de la demostración.
 editor/                         Editor del catálogo: formularios, valida y guarda en GitHub.
                                 validacion.js es gemela de validar.py (ver pruebas).
 demo/index.html                 Sitio de ejemplo con el widget embebido (no es entregable).
